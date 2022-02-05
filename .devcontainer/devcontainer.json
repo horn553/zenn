@@ -20,7 +20,8 @@
 		"eamodio.gitlens",
 		"taichi.vscode-textlint",
 		"compulim.vscode-clock",
-		"sakamoto66.vscode-paste-image"
+		"sakamoto66.vscode-paste-image",
+		"davidanson.vscode-markdownlint"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
