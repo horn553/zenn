@@ -19,7 +19,8 @@
       },
       "no-mix-dearu-desumasu": {
         "preferInList": "ですます"
-      }
+      },
+      "ja-no-weak-phrase": false
     }
   }
 }
