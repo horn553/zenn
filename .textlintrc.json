@@ -16,6 +16,9 @@
       },
       "ja-no-mixed-period": {
         "allowPeriodMarks": ["……"]
+      },
+      "no-mix-dearu-desumasu": {
+        "preferInList": "ですます"
       }
     }
   }
