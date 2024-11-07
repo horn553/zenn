@@ -2,9 +2,12 @@
 title: "Ubuntuで複数・最新のPythonのバージョンを管理する (それぞれパスを通す)"
 emoji: "🐍"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ['python', 'ubuntu']
+topics: ["python", "ubuntu"]
 published: true
 ---
+
+<!-- textlint-disable -->
+<!-- markdownlint-disable -->
 
 # やること
 
@@ -123,7 +126,7 @@ $ sudo rm /usr/bin/python3.10
 
 `.bash_logout` に書いちゃえばいいのかもしれないですが、複数窓開いていたときに困りそうです。
 
-### VS CodeのPython Interpreterに選択肢として表示されない
+### VS Code の Python Interpreter に選択肢として表示されない
 
 要は、パスが通っていないことによる弊害です。
 このようなちょっとした弊害が散らばっていそうな気がしました。

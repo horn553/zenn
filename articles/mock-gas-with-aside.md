@@ -6,6 +6,9 @@ topics: ["GAS", "aside", "clasp"]
 published: true
 ---
 
+<!-- textlint-disable -->
+<!-- markdownlint-disable -->
+
 快適な GAS コーディングをサポートする aside を実際に使ってみました。
 初期設定やテスト用モックの準備で何箇所か沼ってしまったので、知見を共有したいと思います。
 

@@ -14,7 +14,7 @@ published: false
 
 ---
 
-おしながき
+### このシリーズの記事一覧
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
 1. **② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3 ← 今回の記事**
@@ -22,14 +22,14 @@ published: false
 1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
 
-このシリーズで完成したもの：
+このシリーズで作成したお問い合わせフォームはこちら。
 https://github.com/horn553/zenn-contact-form
 
 ---
 
 ## 要件
 
-今回のフォームの要素は次の通りです：
+今回のフォームを構成する要素は次の通りです。
 
 | 名称           | 種類           | 概要                                         |
 | -------------- | -------------- | -------------------------------------------- |
@@ -44,7 +44,10 @@ https://github.com/horn553/zenn-contact-form
 しかし、今回はフォームの規模が大きくなく、いずれの要素もシンプルなものでしたので、バリデーションライブラリとして Zod を使用するのみとしました。
 
 また、bot による自動送信を防ぐため、CAPTCHA を用意するのも王道です。
-せっかく Cloudflare を利用しているので[Cloudflare Turnstile](https://www.cloudflare.com/ja-jp/application-services/products/turnstile/)の使用を検証しましたが、相性の問題かクライアントが頻繁にクラッシュしてしまい……
+
+せっかく Cloudflare を利用しているので[Cloudflare Turnstile](https://www.cloudflare.com/ja-jp/application-services/products/turnstile/)の使用を検証しました。
+しかし、相性の問題かクライアントが頻繁にクラッシュしてしまい……
+
 ここは定番の[Google reCAPTCHA v3](https://developers.google.com/recaptcha/docs/v3?hl=ja)を使用することとしました。
 
 ## クライアントサイドのフォーム実装
@@ -117,7 +120,8 @@ export const actions = {
 } satisfies Actions;
 ```
 
-`FormData`型から取り回しがよいように`Object`型への変換を挟んでいるため、やや行数はかかりましたが、非常に簡単にリクエストを受け取ることができます！
+`FormData`型から取り回しがよいように`Object`型への変換を挟んでいます。
+そのため行数はかかりましたが、本質的にはとても簡単にリクエストを受け取ることができています！
 
 ![サーバーサイドで受け取ったリクエストのスクリーンショット](/images/create-contact-form-02/02.png)
 
@@ -359,7 +363,8 @@ export const requestBodySchema = z.object({
 ```
 
 :::message
-今回のように custom event listener（関数`handler()`のような）を利用する場合、ページのリロードが行われず、変数`form`定義直後の`console.log()`はうまく発火しません。
+今回のように custom event listener（関数`handler()`のような）を利用する場合、ページのリロードが行われません。
+そのため、変数`form`定義直後の`console.log()`はフォーム送信後に呼び出されません。
 
 Svelte5 の rune システムを活用し、`form`についてリアクティブな処理とする必要があります。
 
@@ -379,7 +384,7 @@ Svelte5 の rune システムを活用し、`form`についてリアクティブ
 
 #### 環境変数の設定
 
-Google の API を叩き、検証を行います。
+Google の API を叩き、トークンを検証します。
 
 secret の管理が必要です。環境変数ファイルを作成します。
 `.gitignore`に指定されていることを確認しておきましょう。
@@ -439,12 +444,10 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 
 ### UX の仕上げ
 
-使い勝手を良くするため、
+使い勝手を良くするため、次の処理を追加します。
 
 - フォーム送信中はフォームの各要素を`disabled`にする
 - フォーム送信成功後はフォームの各要素を初期化する
-
-といった処理を入れていきます。
 
 #### 送信中は disabled
 
@@ -473,17 +476,17 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 
 #### フォーム送信後に初期化
 
-前述した変数`form`の更新を察知し、処理に成功した場合に初期化処理を走らせます。
+前述した変数`form`の更新を察知し、処理が成功した場合に初期化処理を走らせます。
 
 ```svelte:/src/routes/contact/+page.svelte
 <script lang="ts">
   $effect(() => {
     if (form?.success) {
       // フォームを初期化する
-			(document.querySelector('[name=name]') as HTMLInputElement).value = '';
-			(document.querySelector('[name=email]') as HTMLInputElement).value = '';
-			(document.querySelector('[name=category]') as HTMLSelectElement).selectedIndex = 0;
-			(document.querySelector('[name=body]') as HTMLTextAreaElement).value = '';
+      (document.querySelector('[name=name]') as HTMLInputElement).value = '';
+      (document.querySelector('[name=email]') as HTMLInputElement).value = '';
+      (document.querySelector('[name=category]') as HTMLSelectElement).selectedIndex = 0;
+      (document.querySelector('[name=body]') as HTMLTextAreaElement).value = '';
     }
   });
 </script>

@@ -1,0 +1,4 @@
+{
+  "MD034": false, // allow bare urls
+  "MD013": false
+}

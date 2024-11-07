@@ -16,7 +16,7 @@ published: false
 
 ---
 
-おしながき
+### このシリーズの記事一覧
 
 1. **① サイト作成：SvelteKit x Cloudflare Pages ← 今回の記事**
 1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)
@@ -24,7 +24,7 @@ published: false
 1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
 
-このシリーズで完成したもの：
+このシリーズで作成したお問い合わせフォームはこちら。
 https://github.com/horn553/zenn-contact-form
 
 ---
@@ -35,7 +35,7 @@ https://github.com/horn553/zenn-contact-form
 
 ![トップページのスクリーンショット](/images/create-contact-form-01/01.png)
 
-その中で、一つだけ動的なページが必要となりました。お問い合わせフォームです。
+その中で、ひとつだけ動的なページが必要となりました。お問い合わせフォームです。
 
 ### お問い合わせフォーム
 
@@ -68,7 +68,7 @@ https://github.com/horn553/zenn-contact-form
 
 まずは SvelteKit のプロジェクト作成します。
 
-今回は次のような設定としました：
+今回は次のような設定としました。
 
 - SvelteKit demo テンプレート
 - TypeScript を使用
@@ -124,15 +124,16 @@ GitHub との連携を選択し、認可を進めていくと、先ほど作成�
 :::
 
 :::message
-たまに、非特異的なエラーでビルドが落ちることがあります。
+たまに、非特異的なエラーでビルドに失敗することがあります。
 ビルドを再試行すると通ったりします。
+
 謎です。
 
 ![デプロイを再試行画面のスクリーンショット](/images/create-contact-form-01/08.png)
 
 :::
 
-デプロイに成功したあとにデプロイ先の URL に行くと、元気に動く SvelteKit の姿を見ることができます！
+デプロイ成功後にデプロイ先の URL へアクセスする、元気に動く SvelteKit の姿を見ることができます！
 
 #### デプロイの仕様
 
@@ -152,7 +153,7 @@ GitHub との連携を選択し、認可を進めていくと、先ほど作成�
 Pages プロジェクト作成時は、`*.pages.dev`ドメインが設定されています。
 これにカスタムドメインをあてることが可能です。
 
-アプリケーションのページの「カスタムドメイン」タブから管理することができます。
+アプリケーションのページの「カスタムドメイン」タブから管理できます。
 
 ![デプロイの詳細画面のスクリーンショット](/images/create-contact-form-01/06.png)
 
