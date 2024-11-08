@@ -1,5 +1,5 @@
 ---
-title: "【②フォーム作成】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
+title: "【② フォーム作成】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
 emoji: "🎺"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "cloudflarepages", "zod"]

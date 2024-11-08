@@ -1,5 +1,5 @@
 ---
-title: "【①サイト作成】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
+title: "【① サイト作成】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
 emoji: "🎻"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "cloudflare", "cloudflarepages"]
@@ -89,6 +89,50 @@ npm run dev
 この後、画面の指示にしたがって Git へのコミットまで済ませます。
 
 参考：[Creating a project • Docs • Svelte](https://svelte.dev/docs/kit/creating-a-project)
+
+#### adapter-cloudflare の導入
+
+Cloudflare Pages 向けにビルドするための adapter が用意されています。
+ありがたく使わせていただきます。
+
+```shell
+npm i @sveltejs/adapter-cloudflare
+```
+
+:::message alert
+執筆時点では各種パッケージが Svelte5 をサポートしておらず、エラーとなります。
+過渡期の対応として、`--force` オプション付きで実行します。
+
+```shell
+npm i --force @sveltejs/adapter-cloudflare
+```
+
+:::
+
+SvelteKit のコンフィグファイルも更新します。
+参考：[Cloudflare Pages • Docs • Svelte](https://svelte.dev/docs/kit/adapter-cloudflare)
+
+```js:/svelte.config.js
+import adapter from '@sveltejs/adapter-cloudflare';
+
+export default {
+  kit: {
+    adapter: adapter({
+      // See below for an explanation of these options
+      routes: {
+        include: ['/*'],
+        exclude: ['<all>']
+      },
+      platformProxy: {
+        configPath: 'wrangler.toml',
+        environment: undefined,
+        experimentalJsonConfig: false,
+        persist: false
+      }
+    })
+  }
+};
+```
 
 ### GitHub リポジトリとの作成
 
