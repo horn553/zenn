@@ -18,11 +18,11 @@ published: false
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
 1. **② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3 ← 今回の記事**
-1. [③ セッション管理：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
-1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
+1. [③ セッション：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
+1. [④ データベース：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
 
-このシリーズで作成したお問い合わせフォームはこちら。
+このシリーズの完成物
 https://github.com/horn553/zenn-contact-form
 
 ---
@@ -37,16 +37,18 @@ https://github.com/horn553/zenn-contact-form
 - Google reCAPTCHA v3 による CAPTCHA 機能を追加
 - フォームの UX 改善
 
+内容はボリューミーですが、Cloudflare サービスとの連携を要さない部分を仕上げてしまいます！
+
 ## 要件
 
 今回のフォームを構成する要素は次の通りです。
 
-| 名称           | 種類           | 概要                                         |
-| -------------- | -------------- | -------------------------------------------- |
-| 氏名           | テキスト       | 送信者の氏名。任意。99 文字以下。            |
-| メールアドレス | テキスト       | 送信者のメールアドレス。必須。254 文字以下。 |
-| カテゴリー     | ドロップダウン | お問い合わせのカテゴリー。必須。             |
-| 本文           | テキストエリア | 必須。999 文字以下。                         |
+| 名称           | 種類           | 必須 | 備考      |
+| -------------- | -------------- | ---- | --------- |
+| 氏名           | テキスト       | NO   | ≦99 文字  |
+| メールアドレス | テキスト       | YES  | ≦254 文字 |
+| カテゴリー     | ドロップダウン | YES  |           |
+| 本文           | テキストエリア | YES  | ≦999 文字 |
 
 ### 技術選定
 
@@ -54,24 +56,28 @@ https://github.com/horn553/zenn-contact-form
 
 フォーム作成のゴールドスタンダードは [Felte](https://felte.dev/) などのフォームライブラリと [Zod](https://zod.dev/) などのバリデーションライブラリを使用することです。
 
-しかし、今回はフォームの規模が大きくなく、いずれの要素もシンプルなものでしたので、バリデーションライブラリとして Zod を使用するのみとしました。
+しかし、今回はフォームの規模が大きくなく、いずれの要素もシンプルなものです。
+そのため、バリデーションライブラリとして Zod を使用するのみとしました。
 
 #### CAPTCHA
 
-また、bot による自動送信を防ぐため、CAPTCHA を用意するのも王道です。
+bot による自動送信を防ぐため、CAPTCHA を用意するのも王道です。
 
 せっかく Cloudflare を利用しているので [Cloudflare Turnstile](https://www.cloudflare.com/ja-jp/application-services/products/turnstile/) の使用を予定していました。
 しかし、相性の問題かクライアントが頻繁にクラッシュしてしまい……
 今回は定番の [Google reCAPTCHA v3](https://developers.google.com/recaptcha/docs/v3?hl=ja) を使用することとしました。
+
+Cloudflare Turnstile は Google reCAPTCHA v3 にはないダークモードのスキンも用意されており、魅力的なんですよね……
+いつかリベンジしたい！
 
 ## クライアントサイドのフォーム実装
 
 ### HTML マークアップ
 
 Svelte のドキュメント通りに実装していきます。
-[日本語版ドキュメント：svelte.jp](https://svelte.jp/) は現在対応中とのことですので、英語版ドキュメントを参照する必要があります。
-
 参考：[Form actions • Docs • Svelte](https://svelte.dev/docs/kit/form-actions)
+
+[日本語版ドキュメント：svelte.jp](https://svelte.jp/) は現在対応中とのことですので、英語版ドキュメントを参照する必要があります。
 
 ```html:/src/routes/contact/+page.svelte
 <form method="POST">
@@ -99,11 +105,11 @@ Svelte のドキュメント通りに実装していきます。
 </form>
 ```
 
-これで `npm run dev` から開発環境を起動し、指定された URL から `/contact` にアクセスすると、プレーンなフォームが生まれています。
+これで `npm run dev` から開発環境を起動し、指定された URL から `/contact` にアクセスすると、生 HTML の温かみに包まれたフォームが生まれています。
 
 ![プレーンなフォームのスクリーンショット](/images/create-contact-form-02/01.png)
 
-## サーバーサイド：Form Action で受け取る
+## Form Action を作成
 
 SvelteKit のフォーム操作、form action で送信内容を受け取ってみます。
 
@@ -140,16 +146,18 @@ export const actions = {
 
 ![サーバーサイドで受け取ったリクエストのスクリーンショット](/images/create-contact-form-02/02.png)
 
-### サーバーサイドからの結果を受け取る
+### ActionData を受け取る
 
-`Actions`からの戻り値を`ActionData`として受け取ることができます。
+サーバーサイドの `Actions` からの戻り値を、クライアントサイドでは `ActionData` として受け取ることができます。
+
+試しに、`console.log()` で受け取ったデータを確認してみます。
 
 ```diff html:/src/routes/contact/+page.svelte（抜粋）
 + <script lang="ts">
 +   import type { PageData, ActionData } from './$types';
 +
 +   let { data, form }: { data: PageData, form: ActionData } = $props();
-+   console.log({form})
++   console.log({ form })
 + </script>
 +
   <form method="POST">

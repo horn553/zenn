@@ -12,7 +12,9 @@ published: false
 今回、弊団のホームページ、ブログをリファクタリングし、パブリックリポジトリとして公開しました 🎉
 [homepage](https://github.com/orchestra-canvas-tokyo/homepage) / [blog](https://github.com/orchestra-canvas-tokyo/blog)
 
-その中の最大の山場であった「お問い合わせフォーム」まわりについて、数記事にわたり知見を共有し尽していきたいと考えています。
+この中で、お問い合わせフォームを SvelteKit と Cloudflare 系のサービスで構築しました。
+
+今回は、実際にお問い合わせフォームをつくっていきながら、ここで得た知見を共有していきます！
 
 ---
 
@@ -20,37 +22,51 @@ published: false
 
 1. **① サイト作成：SvelteKit x Cloudflare Pages ← 今回の記事**
 1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)
-1. [③ セッション管理：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
-1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
+1. [③ セッション：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
+1. [④ データベース：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
 
-このシリーズで作成したお問い合わせフォームはこちら。
+このシリーズの完成物
 https://github.com/horn553/zenn-contact-form
 
 ---
 
-## この記事でやること
+## はじめに
 
-- ホームページの要件や技術構成を紹介
-  - お問い合わせフォームの背景に触れます！
-- Cloudflare Pages に SvelteKit プロジェクトをデプロイ
-  - これらの組み合わせの便利さを語ります！
+### お問い合わせ窓口
 
-## 今回作成したサイトの要件
+HP にお問い合わせ窓口をどのように掲載するか、というのは悩みどころです。
 
-大部分は、団体や演奏会について紹介する静的なサイトです。
+大きく選択肢は 2 つでしょうか。
 
-![トップページのスクリーンショット](/images/create-contact-form-01/01.png)
+1. メールアドレスを掲載する
+2. フォームを用意する
 
-その中で、ひとつだけ動的なページが必要となりました。お問い合わせフォームです。
+#### 1. メールアドレスを掲載する
 
-### お問い合わせフォーム
+シンプルな方法に見えますが、やや考慮事項が多いです。
 
-演奏会に関する質問、チラシの配布依頼、はたまた参加希望と団外からのお問い合わせはしばしば発生します。
+直接メールアドレスを掲載するのは避けたほうがよいです。
+Web 上を回遊しているアドレス収集 bot に捕まってしまい、スパムの標的とされてしまうからです。
 
-今回は、画像のようなお問い合わせフォームを用意することとしました。
+対策として、メールアドレスの難読化があげられます。
+古典的にメールアドレスの `@` を `★` などの代替文字に置換したり、メールアドレスの一部や全部を画像に置換したり、はたまた JavaScript を用いて難読化処理をかけます。
 
-![お問い合わせフォームのスクリーンショット](/images/create-contact-form-01/02.png)
+最近、Cloudflare による難読化サービスの紹介記事も話題になりましたね！
+https://zenn.dev/kameoncloud/articles/a3e762f94b069f
+
+Cloudflare による難読化サービスを用いれば、非 bot に対してはコピー可能な文字列を描画するため、ユーザビリティをそこまで損ねません。
+しかし、それ以外の方法では、ユーザビリティを損ねてしまいます。
+
+#### 2. フォームを設置する
+
+お問い合わせフォーム・メールフォームを掲載する方法です。
+
+実装の工数はかかってしまいますが、きちんと設計・実装すればユーザービリティをかえって高めることが可能です。
+
+必要な情報を別入力欄として切り出したり、カテゴリーに応じて動的に入力欄を調整したり……
+
+問い合わせる側、問い合わせを受ける側双方が便利な内容にできます。
 
 ## 今回採用した技術構成
 
@@ -67,11 +83,10 @@ https://github.com/horn553/zenn-contact-form
 
 ## 環境構築
 
-今回は、類似のアプリケーションをイチから作ることで、各技術の概要を紹介していきます。
-
 ### SvelteKit プロジェクトの作成
 
 まずは SvelteKit のプロジェクト作成します。
+参考：[Creating a project • Docs • Svelte](https://svelte.dev/docs/kit/creating-a-project)
 
 今回は次のような設定としました。
 
@@ -87,8 +102,6 @@ npm run dev
 ```
 
 この後、画面の指示にしたがって Git へのコミットまで済ませます。
-
-参考：[Creating a project • Docs • Svelte](https://svelte.dev/docs/kit/creating-a-project)
 
 #### adapter-cloudflare の導入
 
@@ -211,9 +224,11 @@ Pages プロジェクト作成時は、`*.pages.dev`ドメインが設定され�
 
 ![CNAMEセットアップ画面のスクリーンショット](/images/create-contact-form-01/07.png)
 
+---
+
 ### おわりに
 
-今回は、採用技術の概要と、SvelteKit プロジェクトを Cloudflare Pages にデプロイする方法についてまとめました。
+今回は、SvelteKit プロジェクトを Cloudflare Pages にデプロイする方法についてまとめました。
 
 次回からは本格的にフォームの作成を進めていきます！
 
@@ -221,6 +236,6 @@ Pages プロジェクト作成時は、`*.pages.dev`ドメインが設定され�
 
 1. ① サイト作成：SvelteKit x Cloudflare Pages
 1. **[② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3 ← 次の記事](https://zenn.dev/orch_canvas/articles/create-contact-form-02)**
-1. [③ セッション管理：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
-1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
+1. [③ セッション：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
+1. [④ データベース：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
