@@ -1,6 +1,6 @@
 ---
 title: "【④ データベース】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
-emoji: "📯"
+emoji: "🥁"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "cloudflarepages", "d1"]
 publication_name: "orch_canvas"

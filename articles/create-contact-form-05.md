@@ -1,6 +1,6 @@
 ---
 title: "【⑤ メール送信】SvelteKit on Cloudflareでお問い合わせフォームをつくる"
-emoji: "📯"
+emoji: "🎼"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "cloudflarepages", "resend"]
 publication_name: "orch_canvas"
