@@ -77,8 +77,6 @@ Cloudflare Turnstile は Google reCAPTCHA v3 にはないダークモードの�
 Svelte のドキュメント通りに実装していきます。
 参考：[Form actions • Docs • Svelte](https://svelte.dev/docs/kit/form-actions)
 
-[日本語版ドキュメント：svelte.jp](https://svelte.jp/) は現在対応中とのことですので、英語版ドキュメントを参照する必要があります。
-
 ```html:/src/routes/contact/+page.svelte
 <form method="POST">
   <label>
@@ -141,7 +139,7 @@ export const actions = {
 } satisfies Actions;
 ```
 
-`FormData` 型から取り回しがよいように `Object` 型への変換を挟んでいます。
+取り回しがいいように、`FormData` 型から `Object` 型への変換を挟んでいます。
 そのため行数はかかりましたが、本質的にはとても簡単にリクエストを受け取ることができています！
 
 ![サーバーサイドで受け取ったリクエストのスクリーンショット](/images/create-contact-form-02/02.png)
@@ -170,7 +168,7 @@ export const actions = {
 `type="email"`、`maxLength` 属性などを指定しているため、基本的にはクライアントサイドでバリデーションがかかっています。
 しかし、安全性を考慮すると、サーバーサイドで再度のバリデーションは必要です。
 
-サーバー **サイド** で **再度** です。
+サーバー **サイド** で **再度** 、行います。
 
 Zod を使うと、 schema を作成するだけで型やバリデート関数を用意してもらうことでできます！
 早速インストールします。
@@ -312,6 +310,8 @@ actions のコードでバリデーションをかけるようにします。
   </form>
 ```
 
+風通しがよくなりましたね！
+
 ## reCAPTCHA v3 を導入
 
 [reCAPTCHA Admin Console](https://www.google.com/recaptcha/admin) にて site key と secret key を発行します。
@@ -395,12 +395,10 @@ schema にも反映させておきます。
 Svelte5 の rune を活用し、`form` についてリアクティブな処理とする必要があります。
 
 ```diff ts:/src/routes/contact/+page.svelte（抜粋）
-  /** 省略 */
-
   let { data, form }: { data: PageData, form: ActionData } = $props();
 - console.log({form})
 
-  /** 省略 */
+  /* 省略 */
 
 + $effect(() => {
 +   console.log({ form });
@@ -415,11 +413,11 @@ reCAPTCHA v3 の画面表示は右下のバッジのみです。
 しかし、残念なことに右下のバッジはダークモードに対応していません。
 
 今回作成したホームページは黒基調のデザインであるため、バッジを隠す方針としました。
+参考：[よくある質問 | reCAPTCHA | Google Developers](https://developers.google.com/recaptcha/docs/faq?hl=ja#id-like-to-hide-the-recaptcha-badge.-what-is-allowed)
 
 ```diff html:/src/routes/contact/+page.svelte（抜粋）
   <form method="POST" on:submit|preventDefault={handleSubmit}>
     <!-- 省略 -->
-+   <!-- ref: https://developers.google.com/recaptcha/docs/faq?hl=ja#id-like-to-hide-the-recaptcha-badge.-what-is-allowed -->
 +   <p class="recaptcha-description">
 +     このサイトはreCAPTCHAによって保護されており、Googleの
 +     <a href="https://policies.google.com/privacy">プライバシーポリシー</a>
@@ -489,7 +487,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 ```
 
 ```diff ts:/src/routes/contact/+page.server.ts（抜粋）
-    /** 省略 */
+    /* 省略 */
 +
 +   // reCAPTCHAを検証
 +   const captchaResult = verifyCaptcha(requestBody.reCaptchaToken);
@@ -497,7 +495,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 +     return { success: false, message: 'Invalid CAPTCHA token' };
 +   }
 
-    /** 省略 */
+    /* 省略 */
 ```
 
 簡単ですね！
@@ -517,14 +515,14 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 
 ```diff html:/src/routes/contact/+page.svelte（抜粋）
   <script lang="ts">
-    /** 省略 */
+    /* 省略 */
 
     const RECAPTCHA_SITE_KEY = '6LcrCHcqAAAAAGwoYDnJR4xmIUNSfzCdgYZowBpX';
 +   let isSubmitting = $state(false);
     async function handleSubmit(event: { currentTarget: EventTarget & HTMLFormElement }) {
 +     isSubmitting = true;
 
-      /** 省略 */
+      /* 省略 */
 
       applyAction(result);
 +     isSubmitting = false;
@@ -586,7 +584,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 長丁場、おつかれさまでした！
 実装した要素の数こそ多いものの、一つひとつがフォームを輝かせる一要素になるのは魅力的ですよね。
 
-フロントエンドはここまでとし、次回からはいよいよサーバーサイドの深みに潜っていきます！
+SvelteKit に閉じた話はここまでとし、次回からはいよいよ Cloudflare の深みに潜っていきます！
 
 ---
 
