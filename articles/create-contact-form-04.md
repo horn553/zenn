@@ -36,7 +36,7 @@ https://github.com/horn553/zenn-contact-form
 
 古典的なレンタルサーバーであれば、PHP 経由でローカルにファイルを作成するという方法もあります。
 
-非技術者による分析や管理のし易さを考え、Google スプレッドシート + Google Apps Script と連携するという方法も便利そうです。
+非技術者による管理や分析のしやすさを考え、Google スプレッドシート + Google Apps Script と連携するという方法も便利そうです。
 
 前回紹介した、Key-Value ストレージを使うことも選択肢ではあります。
 
@@ -47,7 +47,7 @@ https://github.com/horn553/zenn-contact-form
 
 そこで、今回はデータベースを利用することとしました。
 
-Cloudflare Pages, KV と Cloudflare 系のサービスを用いていますので、同社の SQL データベースサービスである Cloudflare D1 を利用する方針としました。
+Cloudflare Pages、KV と Cloudflare 系のサービスを用いていますので、同社の SQL データベースサービスである Cloudflare D1 を利用する方針としました。
 
 ## 技術選定
 
@@ -64,12 +64,24 @@ Cloudflare Pages, KV と Cloudflare 系のサービスを用いていますの�
 
 今回も、Pages Functions を用いて D1 を操作していきます。
 
+### 価格
+
+Cloudflare D1 の無料枠は次の通りです。
+参考：[Pricing - Cloudflare D1 docs](https://developers.cloudflare.com/d1/platform/pricing/)
+
+- 読み取り行上限: 5,000,000/日
+- 書き込み行上限: 100,000/日
+- ストレージ上限: 5GB
+
+Cloudflare Pages Functions については前回の記事で述べた通りです。
+
+これまた、ある程度のアプリケーションであれば実用に耐えるものではないでしょうか？
+
 ## 環境構築
 
 ### 依存関係のインストール
 
 まずは依存関係をインストールします。
-
 参考：[Drizzle ORM - Cloudflare D1](https://orm.drizzle.team/docs/connect-cloudflare-d1)
 
 ```shell
@@ -107,7 +119,7 @@ export default defineConfig({
 
 ### KV 名前空間の作成
 
-Cloudflare ダッシュボード（GUI）で作成してもいいですが、ここでは wrangler（CLI）で作成します。
+Cloudflare ダッシュボード（GUI）で作成してもいいですが、ここでは Wrangler（CLI）で作成します。
 また、この規模だとプレビュー環境と本番環境は同じでもよい気がしますが、ここではあえて異なる名前空間で管理する方法をまとめます。
 
 前回と同じく、攻めの姿勢です。
@@ -120,7 +132,8 @@ npx wrangler d1 create zenn-contact-form-production # プロダクション環�
 こうすると 2 つの `id` が生成されます。
 それぞれを wrangler の設定ファイルに反映させます。
 
-ローカル環境。適当な文字列を指定しておきます。
+ローカル環境の `database_id` には適当な文字列を指定します。
+ここでは、プレビュー環境と同じ ID を指定しておきます。
 
 キー `binding` の値は、SvelteKit から呼び出す際のキーの名称です。
 プロジェクト内で一意であればよいので、`DB` とします。
@@ -200,7 +213,6 @@ npx wrangler d1 create zenn-contact-form-production # プロダクション環�
 
 DB の schema（table、row の定義）を作成します。
 Drizzle のドキュメントに従い、`/src/db/schema.ts` に作成します。
-
 参考：[Drizzle ORM - Schema](https://orm.drizzle.team/docs/sql-schema-declaration)
 
 ```ts:/src/db/schema.ts
@@ -281,7 +293,7 @@ export async function log(db: AnyD1Database, value: ContactLog) {
         return { success: false, message: 'Invalid request body' };
       }
       const requestBody = validationResult.data;
-+
+
 +     // id採番、受信日時取得
 +     let currentStatus: (typeof statuses)[number] = 'have sent email';
 +     const contactLog: ContactLog = {
@@ -290,7 +302,7 @@ export async function log(db: AnyD1Database, value: ContactLog) {
 +       receivedAt: new Date().toISOString(),
 +       ...requestBody
 +     };
-
++
       // CSRFトークンを検証
       const csrfResult = requestBody.csrfToken === session.data.csrfToken;
       if (!csrfResult) {
@@ -310,13 +322,13 @@ export async function log(db: AnyD1Database, value: ContactLog) {
 +
         return { success: false, message: 'Invalid CAPTCHA token' };
       }
-+
+
 +     // TODO: メールを送信
 +
 +     currentStatus = 'have sent email';
 +     contactLog.status = statusScheme.parse(currentStatus);
 +     log(platform?.env.DB, contactLog);
-
++
       return { success: true };
     }
   } satisfies Actions;
@@ -352,6 +364,7 @@ npx wrangler d1 execute DB --command "select id, receivedAt, status from contact
 一方で、それぞれの環境の中では同一の D1 に接続するため、過去のデプロイで作成・編集したデータを引き継ぎます。
 
 Cloudflare ダッシュボードから D1 のページに行き、各データベースの内容を直接見て確認できます。
+Wrangler からの確認も可能です。
 
 ---
 
@@ -360,7 +373,7 @@ Cloudflare ダッシュボードから D1 のページに行き、各データ�
 データベースとの連携……これだけで世の中の多くのアプリケーションは実装できることになります。
 なんと甘美な響き……たまりませんね！
 
-次回は Cloudflare から少し離れて（Cloudflare の推奨のひとつではありますが）、Resend を用いたメール送信機能を実装し、フォームの仕上げを行います！
+次回は Cloudflare から少し離れて、Resend を用いたメール送信機能を実装し、フォームを仕上げていきます！
 
 ---
 
