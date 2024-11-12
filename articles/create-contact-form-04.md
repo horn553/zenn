@@ -379,6 +379,6 @@ Wrangler からの確認も可能です。
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
 1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)
-1. ③ セッション：SvelteKit x Cloudflare KV
-1. [④ データベース：SvelteKit x Cloudflare D1 ←](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
-1. [⑤ メール送信：SvelteKit x Resend ← 次の記事](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
+1. [③ セッション：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
+1. ④ データベース：SvelteKit x Cloudflare D1
+1. **[⑤ メール送信：SvelteKit x Resend ← 次の記事 ← 次の記事](https://zenn.dev/orch_canvas/articles/create-contact-form-05)**
