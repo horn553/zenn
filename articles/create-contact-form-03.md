@@ -17,7 +17,7 @@ published: false
 #### このシリーズの記事一覧
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
-1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3(https://zenn.dev/orch_canvas/articles/create-contact-form-02)
+1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)
 1. **③ セッション：SvelteKit x Cloudflare KV ← 今回の記事**
 1. [④ データベース：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
@@ -56,15 +56,15 @@ Cloudflare Workers で Cloudflare KV を呼び出すのと似たイメージで�
 Cloudflare KV の無料枠は次の通りです。
 参考︰[Pricing - Cloudflare Workers KV](https://developers.cloudflare.com/kv/platform/pricing/)
 
-- 読み取り上限: 100,000回/日
-- 書き込み、削除、リスト上限: 1,000回/日
+- 読み取り上限: 100,000 回/日
+- 書き込み、削除、リスト上限: 1,000 回/日
 - 容量上限: 1GB
 
 Cloudflare Pages Functions は Workers と枠が同様です。無料枠は次の通りです。
 参考：[Pricing - Cloudflare Workers](https://developers.cloudflare.com/workers/platform/pricing/#workers)
 
-- リクエスト上限: 100,000件/日
-- CPU時間上限: 10ms/呼び出し
+- リクエスト上限: 100,000 件/日
+- CPU 時間上限: 10ms/呼び出し
 
 今回のような、シンプルかつ頻用されないアプリケーションであれば、問題なく使える水準ではないでしょうか。
 
@@ -195,7 +195,7 @@ Wrangler のキャッシュなどを ignore します。
 ### セッションの初期化
 
 パッケージ `svelte-kit-sessions` のガイドに従い、hook としてセッションの初期化処理を記述します。
-SvelteKitでは、リクエストに関連するイベント処理を [hooks](https://svelte.dev/docs/kit/hooks) と呼びます。
+SvelteKit では、リクエストに関連するイベント処理を [hooks](https://svelte.dev/docs/kit/hooks) と呼びます。
 
 ここでは、hooks のうちリクエスト時に呼び出される handle を利用します。
 
