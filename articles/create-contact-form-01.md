@@ -35,8 +35,10 @@ https://github.com/horn553/zenn-contact-form
 
 ### お問い合わせ窓口
 
-HP にお問い合わせ窓口をどのように掲載するか、というのは悩みどころです。
+しばしばお問い合わせは来るものです。
+弊団のようなアマチュアオーケストラでは、演奏会に関する質問、参加希望、チラシの掲載依頼などなど……
 
+このようなお問い合わせを受け付ける窓口をどのように掲載するか。悩みどころです。
 大きく選択肢は 2 つでしょうか。
 
 1. メールアドレスを掲載する
@@ -56,30 +58,47 @@ Web 上を回遊しているアドレス収集 bot に捕まってしまい、�
 https://zenn.dev/kameoncloud/articles/a3e762f94b069f
 
 Cloudflare による難読化サービスを用いれば、非 bot に対してはコピー可能な文字列を描画するため、ユーザビリティをそこまで損ねません。
-しかし、それ以外の方法では、ユーザビリティを損ねてしまいます。
+しかし、それ以外の方法では、ユーザビリティを損ねかねません。
 
 #### 2. フォームを設置する
 
 お問い合わせフォーム・メールフォームを掲載する方法です。
 
 実装の工数はかかってしまいますが、きちんと設計・実装すればユーザービリティをかえって高めることが可能です。
-
 必要な情報を別入力欄として切り出したり、カテゴリーに応じて動的に入力欄を調整したり……
 
 問い合わせる側、問い合わせを受ける側双方が便利な内容にできます。
 
 ## 今回採用した技術構成
 
-[ブログ](https://blog.orch-canvas.tokyo)などの関連 Web ページを Cloudflare Pages で構築していたため、それに準ずる形としました。
+お気に入りの SvelteKit を用います。
+Cloudflare Pages が開発に際し大変便利ですので、それを軸に構成していきます。
+詳しくはこの記事で述べていきます！
 
 | 種類           | 仕様技術                                                                                  | 備考                                                                                           |
 | -------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | フレームワーク | SvelteKit                                                                                 | Svelte4(TypeScript, HTML, CSS)                                                                 |
 | リポジトリ     | GitHub                                                                                    |                                                                                                |
 | ホスティング   | [Cloudflare Pages](https://www.cloudflare.com/ja-jp/developer-platform/products/pages/)   | GitHub と連携                                                                                  |
-| セッション管理 | [Cloudflare KV](https://www.cloudflare.com/ja-jp/developer-platform/products/workers-kv/) | ライブラリとして[svelte-kit-sessions](https://www.npmjs.com/package/svelte-kit-sessions)を使用 |
+| セッション管理 | [Cloudflare KV](https://www.cloudflare.com/ja-jp/developer-platform/products/workers-kv/) | パッケージとして[svelte-kit-sessions](https://www.npmjs.com/package/svelte-kit-sessions)を使用 |
 | データベース   | [Cloudflare D1](https://www.cloudflare.com/ja-jp/developer-platform/products/d1/)         | ORM として[Drizzle](https://orm.drizzle.team/)を使用                                           |
 | CAPTCHA        | [Google reCAPTCHA v3](https://developers.google.com/recaptcha?hl=ja)                      |                                                                                                |
+
+### 価格
+
+ここでは、今回セットアップする Cloudflare Pages についてまとめます。
+次々回以降で触れる Pages Functions、KV、D1 などについては、都度提示します。
+
+無料プランでは次のような仕様となっています。
+参考: [Cloudflare Pages](https://pages.cloudflare.com/)
+
+- 同時ビルド数: 1件
+- ビルド上限: 500件/月
+- カスタムドメイン数上限: 250個/プロジェクト
+- **サイト数、静的アセット容量、帯域幅: 無制限**
+
+なんと太っ腹な！
+大抵のサイトに十分耐えうる水準ではないでしょうか。
 
 ## 環境構築
 
@@ -204,6 +223,7 @@ GitHub との連携を選択し、認可を進めていくと、先ほど作成�
 本番環境として設定したブランチに対するプッシュは本番環境に、それ以外はプレビュー環境にデプロイされます。
 本番環境、プレビュー環境、ブランチエイリアスの他、各プッシュごとの URL も発行され、大変便利です。
 
+<!-- デプロイ成功メールの画像に置換 -->
 ![デプロイの詳細画面のスクリーンショット](/images/create-contact-form-01/04.png)
 
 プレビュー環境として一部のブランチのみを（allow list / deny list で）指定したい場合など、詳細な設定も用意されています。
@@ -219,7 +239,7 @@ Pages プロジェクト作成時は、`*.pages.dev`ドメインが設定され�
 
 ![デプロイの詳細画面のスクリーンショット](/images/create-contact-form-01/06.png)
 
-画面の指示に従うことで、セットアップは簡単（<10 分）に終了します。
+画面の指示に従うことで、セットアップは簡単に終了します。作業自体は10分もあれば終わります。
 他社のネームサーバーを使用しているドメインの場合も、CNAME レコードを設定することで簡単にセットアップができます！
 
 ![CNAMEセットアップ画面のスクリーンショット](/images/create-contact-form-01/07.png)
@@ -229,6 +249,9 @@ Pages プロジェクト作成時は、`*.pages.dev`ドメインが設定され�
 ### おわりに
 
 今回は、SvelteKit プロジェクトを Cloudflare Pages にデプロイする方法についてまとめました。
+
+セットアップの簡便さ、プレビュー環境の自動生成、カスタムドメインの適応……
+開発に便利ながら本番仕様にも耐えうる、ありがたいプロダクトではないでしょうか！
 
 次回からは本格的にフォームの作成を進めていきます！
 
