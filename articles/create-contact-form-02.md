@@ -500,7 +500,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 
 簡単ですね！
 
-### UX の仕上げ
+## UX の仕上げ
 
 フォームの使い勝手を良くするため、次の処理を追加します。
 
@@ -509,7 +509,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
 
 このあたりは個人の経験や趣味嗜好が大いに反映される部分かと思います。
 
-#### 送信中は `disabled`
+### 送信中は `disabled`
 
 フラグ `isSubmitting` を Svelte5 の runes に乗せます。
 
@@ -560,7 +560,7 @@ export async function verifyCaptcha(token: string): Promise<boolean> {
   </form>
 ```
 
-#### フォーム送信後に初期化
+### フォーム送信後に初期化
 
 前述した変数 `form` の更新を察知し、処理が成功した場合に初期化処理を走らせます。
 
