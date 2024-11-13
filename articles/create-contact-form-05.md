@@ -39,6 +39,7 @@ https://github.com/horn553/zenn-contact-form
 1. 個別の回答へのスムーズな導線を用意できる
 
 2 つ目をチャットページへの誘導で代替している場合もありますが、工数がけた違いとなってしまいます。
+
 メール送信機能の実装は迷わず行う方針として、技術選定に移ります。
 
 ## 技術選定
@@ -56,7 +57,7 @@ Cloudflare で取得できる＝移管できるドメインは数多くありま
 
 ### Resend
 
-既存の独自ドメインに対しメール送信 API を提供するサービスです。
+既存の独自ドメインに対し、メール送信 API を提供するサービスです。
 DNS レコードを追加し、Resend サーバーをメール送信サーバーとして登録することで実現させています。
 
 今回は使いませんが、予約送信、開封・リンク追跡など多数の機能を兼ね備えています。
@@ -78,6 +79,8 @@ Resend の無料枠の概要は次の通りです。
 
 前述した通り、Cloudflare 側もガイドを提供しています。相思相愛！
 参考：[Send Emails With Resend | Cloudflare Workers docs](https://developers.cloudflare.com/workers/tutorials/send-emails-with-resend/)
+
+今回は、そのうち必要な部分のみをかいつまんで実装していきます。
 
 ### 依存関係のインストール
 
@@ -113,7 +116,7 @@ DNS のセットアップ画面に移行しますので、それぞれすべて�
 
 Resend のアカウントページから API Keys に遷移し、Create API Key から作成します。
 
-![Domainsページのスクリーンショット](/images/create-contact-form-05/01.png)
+![API Keysページのスクリーンショット](/images/create-contact-form-05/02.png)
 
 発行した API Key は環境変数に追加しておきます。
 
@@ -123,6 +126,8 @@ Resend のアカウントページから API Keys に遷移し、Create API Key 
 ```
 
 忘れる前に Cloudflare ダッシュボードにも追加しておきます。
+
+![環境変数の追加画面のスクリーンショット](/images/create-contact-form-02/05.png)
 
 :::message
 
@@ -134,15 +139,15 @@ Resend のアカウントページから API Keys に遷移し、Create API Key 
 
 ### 文面の作成
 
-基本的なメールの形態はテキストですが、HTML メールを用意するという手があります。
+基本的なメールの形態はテキストですが、HTML 版を用意するという手があります。
 
-Svelte でもっとも有名な HTML 作成ライブラリは [svelte-email](https://svelte-email.vercel.app/docs/overview/svelte-email) でしょうか。
+Svelte でもっとも有名な HTML メール作成ライブラリは [svelte-email](https://svelte-email.vercel.app/docs/overview/svelte-email) でしょうか。
 しかし、1 年以上メンテナンスされておらず、Svelte5 への対応が行われるか判断がつきません。
 
-安全のため、また HTML メールは Resend の紹介記事において本質出ないことから、テキストのみのメールのみとします。
+安全のため、また HTML メールは Resend の紹介記事において本質でないことから、テキストのみのメールを送信することにします。
 守りの姿勢です。
 
-ちなみに、メールの構成要件はシンプルであるため、弊団のホームページでは文字列処理だけで HTML メールを作成する方針としました。
+ちなみに、メールの構成要件はシンプルであるため、弊団のホームページでは文字列処理だけで HTML メールを作成する方針としていたりします。
 
 ……閑話休題。
 メール送信機能は別ファイルに切り出しました。
