@@ -4,7 +4,7 @@ emoji: "🎻"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "cloudflare", "cloudflarepages"]
 publication_name: "orch_canvas"
-published: false
+published: true
 ---
 
 私たちは都内を中心に活動しているアマチュアオーケストラの [Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/) です。
