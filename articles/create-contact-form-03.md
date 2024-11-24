@@ -381,7 +381,7 @@ ORM も交わる、より深く便利な世界へ進んでいきます！
 ---
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
-1. ② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3
-1. **[③ セッション管理：SvelteKit x Cloudflare KV ← 次の記事](https://zenn.dev/orch_canvas/articles/create-contact-form-03)**
-1. [④ データベース管理：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
+1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)
+1. ③ セッション管理：SvelteKit x Cloudflare KV
+1. **[④ データベース管理：SvelteKit x Cloudflare D1 ← 次の記事](https://zenn.dev/orch_canvas/articles/create-contact-form-04)**
 1. [⑤ メール送信：SvelteKit x Resend](https://zenn.dev/orch_canvas/articles/create-contact-form-05)
