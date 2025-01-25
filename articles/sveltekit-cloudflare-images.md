@@ -1,5 +1,5 @@
 ---
-title: "SvelteKit on Cloudflare PagesにCloudflare Imagesを導入する"
+title: "SvelteKitでenhanced-imgからCloudflare Imagesに移行した"
 emoji: "🖼️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["sveltekit", "cloudflare", "cloudflareimages"]
