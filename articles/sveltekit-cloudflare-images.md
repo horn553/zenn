@@ -185,7 +185,7 @@ AVIFはより高い圧縮率を誇ります。しかし、未対応ブラウザ�
     srcset={`${getCloudflareSrc(src, [...commonOptions, ['height', '3840']])} 2x`}
     {alt}
   />
-{:else useCloudflareImages}
+{:else}
   <img {src} {alt} />
 {/if}
 ```
