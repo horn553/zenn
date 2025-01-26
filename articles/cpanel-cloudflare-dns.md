@@ -68,8 +68,10 @@ cPanelは普及したサービスですので、英語で調べると多くの�
 - `mail A <サーバーのIPアドレス>`
 - プロキシステータス：無効（DNSのみ）
 
-Cloudflareとしては、プロキシを有効化することを推奨しています。
+Cloudflareとしては、プロキシを有効化することを推奨しています[^1]。
 IPアドレスの露出が防がれることで、攻撃可能性が下がるからです。
+
+[^1]: [Proxy status · Cloudflare DNS docs](https://developers.cloudflare.com/dns/manage-dns-records/reference/proxied-dns-records/#dns-only-records)
 
 しかし、元々は露出していたものでありMXレコードでは露出していること、Cloudflare DNSを利用することで得られるメリットが大きいことから、上記のレコードを追加・維持することにしました。
 
