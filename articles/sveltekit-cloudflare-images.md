@@ -4,7 +4,7 @@ emoji: "🖼️"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["sveltekit", "cloudflare", "cloudflareimages"]
 publication_name: "orch_canvas"
-published: false
+published: true
 ---
 
 ## まとめ
