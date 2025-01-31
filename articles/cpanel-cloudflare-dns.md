@@ -89,3 +89,29 @@ IPアドレスの露出が防がれることで、攻撃可能性が下がるか
 新たな視点、新たなアプローチを見つけやすいです。
 
 この辺りの技術を高めていくというのも、重要なITスキルだなぁと痛感した今日この頃です。
+
+---
+
+<!-- begin upcoming concert announcement -->
+
+## 次回演奏会のご案内
+
+日々の癒しに。新しいひらめきのきっかけに。
+オーケストラの演奏会はいかがですか？
+
+初めの方も大歓迎！
+ご来場お待ちしております。
+
+> Orchestra Canvas Tokyo
+> 第13回定期演奏会
+>
+> 2025年2月24日(月祝)
+> 横浜みなとみらいホール
+>
+> ブルックナー / 交響曲第8番 ほか
+>
+> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)にて
+>
+> [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
+
+<!-- end upcoming concert announcement -->

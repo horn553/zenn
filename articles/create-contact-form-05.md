@@ -255,3 +255,29 @@ ${content.body}`;
 1. [③ セッション：SvelteKit x Cloudflare KV](https://zenn.dev/orch_canvas/articles/create-contact-form-03)
 1. [④ データベース：SvelteKit x Cloudflare D1](https://zenn.dev/orch_canvas/articles/create-contact-form-04)
 1. ⑤ メール送信：SvelteKit x Resend
+
+---
+
+<!-- begin upcoming concert announcement -->
+
+## 次回演奏会のご案内
+
+日々の癒しに。新しいひらめきのきっかけに。
+オーケストラの演奏会はいかがですか？
+
+初めの方も大歓迎！
+ご来場お待ちしております。
+
+> Orchestra Canvas Tokyo
+> 第13回定期演奏会
+>
+> 2025年2月24日(月祝)
+> 横浜みなとみらいホール
+>
+> ブルックナー / 交響曲第8番 ほか
+>
+> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)にて
+>
+> [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
+
+<!-- end upcoming concert announcement -->
