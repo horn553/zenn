@@ -19,8 +19,8 @@ published: false
 
 https://blog.orch-canvas.tokyo
 
-各記事をコンポーネントとして作成しています。
-コンポーネントから、メタ情報を変数としてエクスポートしています。
+各記事をコンポーネントとして作成する形をとっています。
+また、その記事コンポーネントから、メタ情報を変数としてエクスポートしています。
 
 ```html:/src/lib/posts/a-random-post/post.svelte
 <script lang="ts" context="module">
@@ -37,7 +37,7 @@ https://blog.orch-canvas.tokyo
 <!-- 略 -->
 ```
 
-このような形で管理をすると、次のようなメリットがあります。
+このような形で管理すると、次のようなメリットがあります。
 
 - Svelteで本文を記述できる
   - 記事で用いる共通コンポーネントを整備しつつ
@@ -61,7 +61,7 @@ https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%
 
 ## 実装
 
-最終的な実装を示します。
+まずは、最終的な実装を示します。
 
 ```ts:/src/lib/posts/index.ts
 import type { Component } from 'svelte';
@@ -104,12 +104,15 @@ Object.keys(modules).forEach((path) => {
 <data.post.default />
 ```
 
-順を追って解説していきます。
+ポイントとなる部分3つを、順を追って解説していきます。
 
-### `import.meta.glob()`
+### ポイント①: `import.meta.glob()`
 
 今回の主役です。
-2つの引数を指定できます。
+globインポートを可能にする、Viteの独自関数です。
+
+この関数は2つの引数で構成されています。
+順を追ってみていきます。
 
 #### 第1引数：パス条件
 
@@ -130,6 +133,8 @@ const modules3 = import.meta.glob(['./dir1/*.ts', './dir2/*.ts'])
 const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 ```
 
+また、後述しますが、ここには静的な文字列（かその配列）を指定する必要があります。
+
 #### 第2引数：オプション
 
 オプションとして、次の3つが指定できます。
@@ -143,9 +148,10 @@ const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 
 [^1]: [静的アセットの取り扱い | Vite](https://ja.vite.dev/guide/assets.html)
 
-今回は、ビルド時に実行されるコードだったため、実装の簡素化のために`eager: true`を指定しました。
+今回は、ビルド時に実行されるコードのためパフォーマンスの優先度は低いと考えました。
+そのため、実装の簡素化のために`eager: true`を指定しました。
 
-### インポートされるコンポーネントの型
+### ポイント②: インポートされるコンポーネントの型
 
 ```ts
 import type { Component } from 'svelte';
@@ -153,9 +159,10 @@ import type { Component } from 'svelte';
 
 これで問題なさそうです。
 
-TypeScriptでトリッキーなことをする際のハードルである、型の問題が解決しました。
+型の問題は、TypeScriptでトリッキーなことをする際の大きなハードルの印象です。
+端的な解決に至って一安心しつつ、次に進みます。
 
-### コンポーネントの描画
+### ポイント③: コンポーネントの描画
 
 Svelte5から、dot notationを用いたコンポーネントの指定が正しく解釈されるようになりました[^2]。
 初めてJSXを見たときのようなぞわぞわを感じつつも、自信をもって記述していきます。
@@ -171,8 +178,8 @@ Svelte5から、dot notationを用いたコンポーネントの指定が正し�
 <data.post.default />
 ```
 
-以上が実装の要点です。
-細々としたハードルを整理すれば、ずいぶんシンプルなのではないでしょうか？
+実装のポイントは以上です。
+細々としたハードルがスッキリした形に整理され、大満足です。
 
 ## Viteのglobインポートの特徴
 
