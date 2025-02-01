@@ -19,7 +19,8 @@ published: false
 
 https://blog.orch-canvas.tokyo
 
-各記事をコンポーネントとし、メタ情報をプロパティとして各記事がもっています。
+各記事をコンポーネントとして作成しています。
+コンポーネントから、メタ情報を変数としてエクスポートしています。
 
 ```html:/src/lib/posts/a-random-post/post.svelte
 <script lang="ts" context="module">
@@ -39,28 +40,28 @@ https://blog.orch-canvas.tokyo
 このような形で管理をすると、次のようなメリットがあります。
 
 - Svelteで本文を記述できる
-  - 共通コンポーネントを整備しつつ
-  - 高い自由度を維持できる
+  - 記事で用いる共通コンポーネントを整備しつつ
+  - 各記事の高い自由度を維持できる
 - メタ情報が型安全になる
 
 しかし、この形式には大きなハードルがありました。
-**globを用いた動的インポートが必要である**という点です。
+**コンポーネントをglobインポートする必要がある**という点です。
 
-今回はこの点の解決法を提示します。
+今回はこれに対する解決案を提示します。
 
 ## Viteのglobインポート
 
 Svelte(Kit)はViteの上での利用を想定されています。
 Viteはフロントエンドのビルドツールです。Svelteで記述されたファイルはViteを通して、一般的なWebサーバーで実行可能な形式にビルドされます。
 
-そんなViteには、globインポートの機能があります。
+そんなViteには、独自のglobインポート機能があります。
 これを使うとうまくいきそうです。
 
-[特徴 | Vite](https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%82%9A%E3%83%BC%E3%83%88)
+https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%82%9A%E3%83%BC%E3%83%88
 
 ## 実装
 
-最終的な実装は次のような形になりました。
+最終的な実装を示します。
 
 ```ts:/src/lib/posts/index.ts
 import type { Component } from 'svelte';
@@ -74,7 +75,7 @@ export type Metadata = {
 export type Post = {
   metadata: Metadata;
   slug: string;
-  default: Component & { render: () => { html: string } };
+  default: Component;
   description: string;
 };
 
@@ -133,11 +134,11 @@ const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 
 オプションとして、次の3つが指定できます。
 
-- `import` インポートするモジュールを明示的に指定
+- `import`: インポートするモジュールを明示的に指定
   - デフォルトインポートは`default`を指定
-- `query` 各パスにつけるクエリを指定
+- `query`: 各パスにつけるクエリを指定
   - Viteのインポート時には`url`や`raw`、`inline`などが指定できます[^1]
-- `eager` `true`を設定することで、同期読み込みとなる
+- `eager`: `true`を設定することで、同期読み込みとなる
   - 未指定あるいは`false`では、Promiseが返される
 
 [^1]: [静的アセットの取り扱い | Vite](https://ja.vite.dev/guide/assets.html)
@@ -153,7 +154,6 @@ import type { Component } from 'svelte';
 これで問題なさそうです。
 
 TypeScriptでトリッキーなことをする際のハードルである、型の問題が解決しました。
-後は、ウイニング・ランも同然です。
 
 ### コンポーネントの描画
 
@@ -163,6 +163,11 @@ Svelte5から、dot notationを用いたコンポーネントの指定が正し�
 [^2]: [Svelte 5 migration guide • Docs • Svelte](https://svelte.dev/docs/svelte/v5-migration-guide#svelte:component-is-no-longer-necessary-Dot-notation-indicates-a-component)
 
 ```html
+<script lang="ts">
+  import type { PageProps } from './$types';
+  let { data }: PageProps = $props();
+</script>
+
 <data.post.default />
 ```
 
