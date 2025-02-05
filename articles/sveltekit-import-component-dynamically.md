@@ -9,7 +9,8 @@ published: false
 
 ## まとめ
 
-- ●
+- SvelteKitでコンポーネント（モジュール）をglobインポートしたい
+- Viteの`import.meta.glob()`を使うことで実現できる
 
 ---
 
@@ -70,7 +71,9 @@ export type Metadata = {
   published: boolean;
   // 略
 };
-/** ポストオブジェクトの型 */
+
+// ポイント②
+/** ポストコンポーネントの型 */
 export type Post = {
   metadata: Metadata;
   slug: string;
@@ -78,6 +81,7 @@ export type Post = {
   description: string;
 };
 
+// ポイント①
 // 動的に記事のSvelteファイルを取得する
 const modules = import.meta.glob('./**/post.svelte', { eager: true }) as Record<string, Post>;
 const posts: { [slug: string]: Post } = {};
@@ -100,12 +104,15 @@ Object.keys(modules).forEach((path) => {
   let { data }: PageProps = $props();
 </script>
 
+
+// ポイント③
 <data.post.default />
 ```
 
+主に3つのポイントがあります。
 順を追って解説していきます。
 
-### `import.meta.glob()`
+### ポイント①：`import.meta.glob()`
 
 今回の主役です。
 2つの引数を指定できます。
@@ -133,18 +140,20 @@ const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 
 オプションとして、次の3つが指定できます。
 
-- `import` インポートするモジュールを明示的に指定
-  - デフォルトインポートは`default`を指定
-- `query` 各パスにつけるクエリを指定
+- `import`
+  - インポートするモジュールを明示的に指定します
+- `query`
+  - 各パスにつけるクエリを指定します
   - Viteのインポート時には`url`や`raw`、`inline`などが指定できます[^1]
-- `eager` `true`を設定することで、同期読み込みとなる
-  - 未指定あるいは`false`では、Promiseが返される
+- `eager`
+  - `true`を設定することで、同期読み込みとなります
+  - 未指定あるいは`false`では、Promiseが返されます
 
 [^1]: [静的アセットの取り扱い | Vite](https://ja.vite.dev/guide/assets.html)
 
 今回は、ビルド時に実行されるコードだったため、実装の簡素化のために`eager: true`を指定しました。
 
-### インポートされるコンポーネントの型
+### ポイント②：インポートされるコンポーネントの型
 
 ```ts
 import type { Component } from 'svelte';
@@ -152,10 +161,21 @@ import type { Component } from 'svelte';
 
 これで問題なさそうです。
 
+コンポーネントはデフォルトエクスポートされているため、Postコンポーネントの型は次のように定義しています。
+
+```ts
+export type Post = {
+  metadata: Metadata;
+  slug: string;
+  default: Component & { render: () => { html: string } };
+  description: string;
+};
+```
+
 TypeScriptでトリッキーなことをする際のハードルである、型の問題が解決しました。
 後は、ウイニング・ランも同然です。
 
-### コンポーネントの描画
+### ポイント③：コンポーネントの描画
 
 Svelte5から、dot notationを用いたコンポーネントの指定が正しく解釈されるようになりました[^2]。
 初めてJSXを見たときのようなぞわぞわを感じつつも、自信をもって記述していきます。
@@ -166,18 +186,46 @@ Svelte5から、dot notationを用いたコンポーネントの指定が正し�
 <data.post.default />
 ```
 
-以上が実装の要点です。
+以上が実装における3つのポイントです。
 細々としたハードルを整理すれば、ずいぶんシンプルなのではないでしょうか？
 
 ## Viteのglobインポートの特徴
 
-●ビルド時に置換される。
+Viteのglobインポートにはいくつかの制限があります。
+代表的なものとして、次のようなコードは書くことができません。
+
+```ts
+// これはビルド時にエラーとなる
+const images = import.meta.glob(`./${slug}/*.png`)
+```
+
+これは、第1引数にはリテラル値（静的な値）のみを指定する必要があるためです。
+
+Viteは、ビルド時に`import.meta.glob()`は一般に実行可能なコードへ変換します。
+
+```ts
+const modules = import.meta.glob('./dir/*.ts', { eager: true })
+
+// ↓ ビルド時に次のようなコードに変換される ↓
+
+import * as __glob__0_0 from './dir/module1.ts'
+import * as __glob__0_1 from './dir/module1.ts'
+const modules = {
+  './dir/module1.ts': __glob__0_0,
+  './dir/module2.ts': __glob__0_1,
+}
+```
 
 ---
 
 ## おわりに
 
-●
+最終的なコードが簡潔なものとなり、大満足です！
+
+実は、記事としてまとめる作業の中でより良い書き方をいくつか見つけることができました。
+悩みぬいて「これで完璧だ！」と思ったものでも、こうやってまとめると新たな発見があるものですね。
+
+これからも、いいネタがあれば書いていきたいなと感じた今日この頃です。
 
 ---
 
