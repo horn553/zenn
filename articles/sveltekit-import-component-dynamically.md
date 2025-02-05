@@ -20,7 +20,8 @@ published: false
 
 https://blog.orch-canvas.tokyo
 
-各記事をコンポーネントとし、メタ情報をプロパティとして各記事がもっています。
+各記事をコンポーネントとして作成する形をとっています。
+また、その記事コンポーネントから、メタ情報を変数としてエクスポートしています。
 
 ```html:/src/lib/posts/a-random-post/post.svelte
 <script lang="ts" context="module">
@@ -37,31 +38,31 @@ https://blog.orch-canvas.tokyo
 <!-- 略 -->
 ```
 
-このような形で管理をすると、次のようなメリットがあります。
+このような形で管理すると、次のようなメリットがあります。
 
 - Svelteで本文を記述できる
-  - 共通コンポーネントを整備しつつ
-  - 高い自由度を維持できる
+  - 記事で用いる共通コンポーネントを整備しつつ
+  - 各記事の高い自由度を維持できる
 - メタ情報が型安全になる
 
 しかし、この形式には大きなハードルがありました。
-**globを用いた動的インポートが必要である**という点です。
+**コンポーネントをglobインポートする必要がある**という点です。
 
-今回はこの点の解決法を提示します。
+今回はこれに対する解決案を提示します。
 
 ## Viteのglobインポート
 
 Svelte(Kit)はViteの上での利用を想定されています。
 Viteはフロントエンドのビルドツールです。Svelteで記述されたファイルはViteを通して、一般的なWebサーバーで実行可能な形式にビルドされます。
 
-そんなViteには、globインポートの機能があります。
+そんなViteには、独自のglobインポート機能があります。
 これを使うとうまくいきそうです。
 
-[特徴 | Vite](https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%82%9A%E3%83%BC%E3%83%88)
+https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%82%9A%E3%83%BC%E3%83%88
 
 ## 実装
 
-最終的な実装は次のような形になりました。
+まずは、最終的な実装を示します。
 
 ```ts:/src/lib/posts/index.ts
 import type { Component } from 'svelte';
@@ -77,7 +78,7 @@ export type Metadata = {
 export type Post = {
   metadata: Metadata;
   slug: string;
-  default: Component & { render: () => { html: string } };
+  default: Component;
   description: string;
 };
 
@@ -115,7 +116,10 @@ Object.keys(modules).forEach((path) => {
 ### ポイント①：`import.meta.glob()`
 
 今回の主役です。
-2つの引数を指定できます。
+globインポートを可能にする、Viteの独自関数です。
+
+この関数は2つの引数で構成されています。
+順を追ってみていきます。
 
 #### 第1引数：パス条件
 
@@ -136,6 +140,8 @@ const modules3 = import.meta.glob(['./dir1/*.ts', './dir2/*.ts'])
 const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 ```
 
+また、後述しますが、ここには静的な文字列（かその配列）を指定する必要があります。
+
 #### 第2引数：オプション
 
 オプションとして、次の3つが指定できます。
@@ -151,7 +157,8 @@ const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 
 [^1]: [静的アセットの取り扱い | Vite](https://ja.vite.dev/guide/assets.html)
 
-今回は、ビルド時に実行されるコードだったため、実装の簡素化のために`eager: true`を指定しました。
+今回は、ビルド時に実行されるコードのためパフォーマンスの優先度は低いと考えました。
+そのため、実装の簡素化のために`eager: true`を指定しました。
 
 ### ポイント②：インポートされるコンポーネントの型
 
@@ -172,8 +179,19 @@ export type Post = {
 };
 ```
 
-TypeScriptでトリッキーなことをする際のハードルである、型の問題が解決しました。
-後は、ウイニング・ランも同然です。
+コンポーネントはデフォルトエクスポートされているため、Postコンポーネントの型は次のように定義しています。
+
+```ts
+export type Post = {
+  metadata: Metadata;
+  slug: string;
+  default: Component & { render: () => { html: string } };
+  description: string;
+};
+```
+
+型の問題は、TypeScriptでトリッキーなことをする際の大きなハードルの印象です。
+端的な解決に至って一安心しつつ、次に進みます。
 
 ### ポイント③：コンポーネントの描画
 
@@ -183,6 +201,11 @@ Svelte5から、dot notationを用いたコンポーネントの指定が正し�
 [^2]: [Svelte 5 migration guide • Docs • Svelte](https://svelte.dev/docs/svelte/v5-migration-guide#svelte:component-is-no-longer-necessary-Dot-notation-indicates-a-component)
 
 ```html
+<script lang="ts">
+  import type { PageProps } from './$types';
+  let { data }: PageProps = $props();
+</script>
+
 <data.post.default />
 ```
 
