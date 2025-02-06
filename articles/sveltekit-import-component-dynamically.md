@@ -9,7 +9,7 @@ published: false
 
 ## まとめ
 
-- SvelteKitでコンポーネント（モジュール）をglobインポートしたい
+- SvelteKitでコンポーネントをglobインポートしたい
 - Viteの`import.meta.glob()`を使うことで実現できる
 
 ---
@@ -64,6 +64,8 @@ https://ja.vite.dev/guide/features#glob-%E3%81%AE%E3%82%A4%E3%83%B3%E3%83%9B%E3%
 
 まずは、最終的な実装を示します。
 
+のちに解説する3つのポイントをコメントで示しています。
+
 ```ts:/src/lib/posts/index.ts
 import type { Component } from 'svelte';
 
@@ -73,7 +75,7 @@ export type Metadata = {
   // 略
 };
 
-// ポイント②
+// ポイント(2)
 /** ポストコンポーネントの型 */
 export type Post = {
   metadata: Metadata;
@@ -82,7 +84,7 @@ export type Post = {
   description: string;
 };
 
-// ポイント①
+// ポイント(1)
 // 動的に記事のSvelteファイルを取得する
 const modules = import.meta.glob('./**/post.svelte', { eager: true }) as Record<string, Post>;
 const posts: { [slug: string]: Post } = {};
@@ -106,12 +108,11 @@ Object.keys(modules).forEach((path) => {
 </script>
 
 
-// ポイント③
+<!-- ポイント(3) -->
 <data.post.default />
 ```
 
-主に3つのポイントがあります。
-順を追って解説していきます。
+3つのポイントについて、順を追って解説していきます。
 
 ### ポイント①：`import.meta.glob()`
 
@@ -145,6 +146,8 @@ const modules4 = import.meta.glob(['./dir/**/*.ts', '!./dir/SECRET/*.ts'])
 #### 第2引数：オプション
 
 オプションとして、次の3つが指定できます。
+それぞれをキーとするオブジェクトを指定します。
+いずれもオプションです。
 
 - `import`
   - インポートするモジュールを明示的に指定します
@@ -174,18 +177,7 @@ import type { Component } from 'svelte';
 export type Post = {
   metadata: Metadata;
   slug: string;
-  default: Component & { render: () => { html: string } };
-  description: string;
-};
-```
-
-コンポーネントはデフォルトエクスポートされているため、Postコンポーネントの型は次のように定義しています。
-
-```ts
-export type Post = {
-  metadata: Metadata;
-  slug: string;
-  default: Component & { render: () => { html: string } };
+  default: Component;
   description: string;
 };
 ```
