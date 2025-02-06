@@ -7,10 +7,19 @@ publication_name: "orch_canvas"
 published: true
 ---
 
-私たちは都内を中心に活動しているアマチュアオーケストラの [Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/) です。
+私たちは [Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/) です。
 
 弊団のホームページ、ブログのリファクタリングにおいてできた、お問い合わせフォーム実装に関する知見をまとめた本シリーズ。
 今回は SvelteKit x Cloudflare KV でセッションを実装します！
+
+<!-- begin short upcoming concert announcement -->
+
+> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+> 次回は2025年2月にブルックナーの交響曲第8番。
+> 初めての方も、そうでない方もお気軽にお越しください！
+> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+
+<!-- end short upcoming concert announcement -->
 
 ---
 
@@ -388,7 +397,7 @@ ORM も交わる、より深く便利な世界へ進んでいきます！
 
 ---
 
-<!-- begin upcoming concert announcement -->
+<!-- begin long upcoming concert announcement -->
 
 ## 次回演奏会のご案内
 
@@ -412,4 +421,4 @@ Orchestra Canvas Tokyoは都内を中心に活動するアマチュアオーケ�
 >
 > [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
 
-<!-- end upcoming concert announcement -->
+<!-- end long upcoming concert announcement -->

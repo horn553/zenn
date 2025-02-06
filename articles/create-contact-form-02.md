@@ -39,6 +39,15 @@ https://github.com/horn553/zenn-contact-form
 
 内容はボリューミーですが、Cloudflare サービスとの連携を要さない部分を仕上げてしまいます！
 
+<!-- begin short upcoming concert announcement -->
+
+> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+> 次回は2025年2月にブルックナーの交響曲第8番。
+> 初めての方も、そうでない方もお気軽にお越しください！
+> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+
+<!-- end short upcoming concert announcement -->
+
 ## 要件
 
 今回のフォームを構成する要素は次の通りです。
@@ -596,7 +605,7 @@ SvelteKit に閉じた話はここまでとし、次回からはいよいよ Clo
 
 ---
 
-<!-- begin upcoming concert announcement -->
+<!-- begin long upcoming concert announcement -->
 
 ## 次回演奏会のご案内
 
@@ -620,4 +629,4 @@ Orchestra Canvas Tokyoは都内を中心に活動するアマチュアオーケ�
 >
 > [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
 
-<!-- end upcoming concert announcement -->
+<!-- end long upcoming concert announcement -->

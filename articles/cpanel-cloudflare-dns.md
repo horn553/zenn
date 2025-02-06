@@ -20,7 +20,17 @@ published_at: 2025-02-03 06:00
 ## 背景
 
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）では、レンタルサーバーとして[ColorfulBox](https://www.colorfulbox.jp/)を利用しています。
-メールサーバーとして利用しているほか、ドメインも同サービスで取得しています。
+
+<!-- begin short upcoming concert announcement -->
+
+> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+> 次回は2025年2月にブルックナーの交響曲第8番。
+> 初めての方も、そうでない方もお気軽にお越しください！
+> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+
+<!-- end short upcoming concert announcement -->
+
+ColorfulBoxをメールサーバーとして利用しているほか、ドメインも同サービスで取得しています。
 また、ColorfulBoxではサーバー管理ツールとしてcPanelが使用されています。
 
 2025年1月ごろ、Webサイト開発の簡便化のため、Cloudflare DNSを利用するよう環境を更新する必要が生じました。
@@ -93,7 +103,7 @@ IPアドレスの露出が防がれることで、攻撃可能性が下がるか
 
 ---
 
-<!-- begin upcoming concert announcement -->
+<!-- begin long upcoming concert announcement -->
 
 ## 次回演奏会のご案内
 
@@ -117,4 +127,4 @@ Orchestra Canvas Tokyoは都内を中心に活動するアマチュアオーケ�
 >
 > [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
 
-<!-- end upcoming concert announcement -->
+<!-- end long upcoming concert announcement -->

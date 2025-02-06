@@ -20,6 +20,15 @@ published: true
 
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）のWebサイトはSvelteKitで開発されており、Cloudflare Pagesにデプロイされています。
 
+<!-- begin short upcoming concert announcement -->
+
+> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+> 次回は2025年2月にブルックナーの交響曲第8番。
+> 初めての方も、そうでない方もお気軽にお越しください！
+> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+
+<!-- end short upcoming concert announcement -->
+
 また、画像読み込みパフォーマンスの最適化として、@sveltejs/enhanced-imgを利用しています。
 ビルド時にフォーマットや画像サイズの最適化を行い、pictureタグを用いた出力まで行ってくれるパッケージです。
 
@@ -231,7 +240,7 @@ AVIFはより高い圧縮率を誇ります。しかし、未対応ブラウザ�
 
 ---
 
-<!-- begin upcoming concert announcement -->
+<!-- begin long upcoming concert announcement -->
 
 ## 次回演奏会のご案内
 
@@ -255,4 +264,4 @@ Orchestra Canvas Tokyoは都内を中心に活動するアマチュアオーケ�
 >
 > [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
 
-<!-- end upcoming concert announcement -->
+<!-- end long upcoming concert announcement -->
