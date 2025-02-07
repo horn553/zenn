@@ -1,5 +1,5 @@
 ---
-title: "SvelteKitでコンポーネントをglobインポートする"
+title: "SvelteKitのコンポーネントをglobでインポートする【ワイルドカードを使いたい】"
 emoji: "🔎"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["sveltekit", "svelte", "vite"]
@@ -9,8 +9,10 @@ published: false
 
 ## まとめ
 
-- SvelteKitでコンポーネントをglobインポートしたい
+- SvelteKitのコンポーネントをglobでインポートしたい
+  - パス文字列にワイルドカードを使いたい
 - Viteの`import.meta.glob()`を使うことで実現できる
+- 型や描画処理もいい感じに書ける
 
 ---
 
