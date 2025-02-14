@@ -2,7 +2,7 @@
 title: "音楽記号を載せたい！ → Noto Musicはいかが？"
 emoji: "🎼"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["bootstrap", "css"]
+topics: ["googlefonts", "music", "svelte"]
 publication_name: "orch_canvas"
 published: false
 # published_at: 2025-02-17 06:00
@@ -103,6 +103,7 @@ Google FontをはじめとするWebフォントといえば、濫用によるパ
 
 今回については、本文中（特に、本文中盤以降）に登場するコンテンツであり、画面内に描画される（もしくはユーザーが必要とする）までは時間に余裕があります。
 Noto Musicの大きさは400kB程度であり十分に許容される水準と考えました。
+CKJ系のフォントでなければ、お手軽なものです。
 
 今回は詳しく触れませんが、Google Fontsで読み込むフォント内容を一部に絞り、読み込み容量をより小さくするのも手です。
 `text`クエリパラメータを用いることで、対応できます。
