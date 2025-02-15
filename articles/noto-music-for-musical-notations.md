@@ -5,7 +5,7 @@ type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["googlefonts", "music", "svelte"]
 publication_name: "orch_canvas"
 published: false
-# published_at: 2025-02-17 06:00
+published_at: 2025-02-17 06:00
 ---
 
 ## まとめ
