@@ -41,10 +41,16 @@ https://github.com/horn553/zenn-contact-form
 
 <!-- begin short upcoming concert announcement -->
 
-> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
-> 次回は2025年2月にブルックナーの交響曲第8番。
-> 初めての方も、そうでない方もお気軽にお越しください！
-> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+:::message
+私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+
+次回は2025年2月にブルックナーの交響曲第8番を演奏します。
+初めての方も、そうでない方も、お気軽にお越しください！
+
+詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+<!-- textlint-disable -->
+:::
+<!-- textlint-disable -->
 
 <!-- end short upcoming concert announcement -->
 
