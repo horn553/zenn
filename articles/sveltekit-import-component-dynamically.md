@@ -15,6 +15,21 @@ published_at: 2025-02-10 06:00
 - Viteの`import.meta.glob()`を使うことで実現できる
 - 型や描画処理もいい感じに書ける
 
+<!-- begin short upcoming concert announcement -->
+
+:::message
+私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+
+次回は2025年2月にブルックナーの交響曲第8番を演奏します。
+初めての方も、そうでない方も、お気軽にお越しください！
+
+詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+<!-- textlint-disable -->
+:::
+<!-- textlint-disable -->
+
+<!-- end short upcoming concert announcement -->
+
 ---
 
 ## 背景

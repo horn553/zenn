@@ -14,20 +14,26 @@ published: true
 - Cloudflare DNSのセットアップが必要だが、DNS、Imagesともに無料枠内で利用できる
 - ビルドエラーの解消、ビルド時間の短縮を得られた
 
+<!-- begin short upcoming concert announcement -->
+
+:::message
+私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+
+次回は2025年2月にブルックナーの交響曲第8番を演奏します。
+初めての方も、そうでない方も、お気軽にお越しください！
+
+詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+<!-- textlint-disable -->
+:::
+<!-- textlint-disable -->
+
+<!-- end short upcoming concert announcement -->
+
 ---
 
 ## 背景
 
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）のWebサイトはSvelteKitで開発されており、Cloudflare Pagesにデプロイされています。
-
-<!-- begin short upcoming concert announcement -->
-
-> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
-> 次回は2025年2月にブルックナーの交響曲第8番。
-> 初めての方も、そうでない方もお気軽にお越しください！
-> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
-
-<!-- end short upcoming concert announcement -->
 
 また、画像読み込みパフォーマンスの最適化として、@sveltejs/enhanced-imgを利用しています。
 ビルド時にフォーマットや画像サイズの最適化を行い、pictureタグを用いた出力まで行ってくれるパッケージです。
