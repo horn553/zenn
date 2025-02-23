@@ -20,10 +20,10 @@ published_at: 2025-02-25 06:00
 :::message
 私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
 
-次回は2025年2月にブルックナーの交響曲第8番を演奏します。
+次回は2025年7月にシューマンの交響曲第2番を演奏します。
 初めての方も、そうでない方も、お気軽にお越しください！
 
-詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
+詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)まで。
 <!-- textlint-disable -->
 :::
 <!-- textlint-disable -->
@@ -144,14 +144,12 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 ご来場をお待ちしています。
 
 > **Orchestra Canvas Tokyo**
-> **第13回定期演奏会**
+> **第14回定期演奏会**
 >
-> 2025年2月24日(月・祝)
-> 横浜みなとみらいホール
-> **ブルックナー / 交響曲第8番 ほか**
+> 2025年7月12日(土)
+> 練馬区立練馬文化センター 大ホール
+> シューマン / 交響曲第2番 ほか
 >
-> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)にて  
->
-> [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
+> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)にて
 
 <!-- end long upcoming concert announcement -->

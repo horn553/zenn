@@ -124,24 +124,21 @@ https://developers.google.com/fonts/docs/getting_started#optimizing_your_font_re
 
 ## 次回演奏会のご案内
 
-Orchestra Canvas Tokyoは都内を中心に活動するアマチュアオーケストラです。
+Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオーケストラです。
 
-日々の癒しに。新しいひらめきのきっかけに。
-オーケストラの演奏会はいかがですか？
+日々の癒しに、新たなひらめきのきっかけに——
+オーケストラの演奏会はいかがでしょうか？
 
 初めての方も大歓迎！
-ご来場お待ちしています。
+ご来場をお待ちしています。
 
-> Orchestra Canvas Tokyo
-> 第13回定期演奏会
+> **Orchestra Canvas Tokyo**
+> **第14回定期演奏会**
 >
-> 2025年2月24日(月祝)
-> 横浜みなとみらいホール
+> 2025年7月12日(土)
+> 練馬区立練馬文化センター 大ホール
+> シューマン / 交響曲第2番 ほか
 >
-> ブルックナー / 交響曲第8番 ほか
->
-> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)にて
->
-> [![](/images/regular-13.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-13)
+> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)にて
 
 <!-- end long upcoming concert announcement -->
