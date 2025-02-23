@@ -290,6 +290,8 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 > 練馬区立練馬文化センター 大ホール
 > シューマン / 交響曲第2番 ほか
 >
+> [![](/images/regular-14.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-14)
+>
 > 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)にて
 
 <!-- end long upcoming concert announcement -->
