@@ -1,5 +1,5 @@
 ---
-title: "指定日時にプルリクをマージする【Merge Schedule】"
+title: "指定日時にプルリクをマージするなら：Merge Schedule【GitHub Actions】"
 emoji: "⏱"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["github", "githubactions"]
