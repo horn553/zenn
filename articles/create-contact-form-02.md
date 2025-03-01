@@ -44,10 +44,10 @@ https://github.com/horn553/zenn-contact-form
 :::message
 私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
 
-次回は2025年7月にシューマンの交響曲第2番を演奏します。
+次回は2025年7月にシューマンの交響曲第2番。
 初めての方も、そうでない方も、お気軽にお越しください！
 
-詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)まで。
+詳しくは[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)まで。
 <!-- textlint-disable -->
 :::
 <!-- textlint-disable -->
@@ -632,6 +632,6 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 >
 > [![](/images/regular-14.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-14)
 >
-> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)にて
+> 詳細は[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)にて
 
 <!-- end long upcoming concert announcement -->

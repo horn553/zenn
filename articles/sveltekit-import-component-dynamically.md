@@ -20,30 +20,13 @@ published_at: 2025-02-10 06:00
 :::message
 私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
 
-次回は2025年7月にシューマンの交響曲第2番を演奏します。
+次回は2025年7月にシューマンの交響曲第2番。
 初めての方も、そうでない方も、お気軽にお越しください！
 
-詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)まで。
+詳しくは[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)まで。
 <!-- textlint-disable -->
 :::
 <!-- textlint-disable -->
-
-<!-- end short upcoming concert announcement -->
-
----
-
-## 背景
-
-当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）では、SvelteKitを用いてブログを作成しています。
-
-https://blog.orch-canvas.tokyo
-
-<!-- begin short upcoming concert announcement -->
-
-> Orchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
-> 次回は2025年2月にブルックナーの交響曲第8番。
-> 初めての方も、そうでない方もお気軽にお越しください！
-> 詳しくは[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-13)まで。
 
 <!-- end short upcoming concert announcement -->
 
@@ -292,6 +275,6 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 >
 > [![](/images/regular-14.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-14)
 >
-> 詳細は[当団ホームページ](https://www.orch-canvas.tokyo/concerts/regular-14)にて
+> 詳細は[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)にて
 
 <!-- end long upcoming concert announcement -->
