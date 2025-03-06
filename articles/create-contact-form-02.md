@@ -47,7 +47,7 @@ https://github.com/horn553/zenn-contact-form
 次回は2025年7月にシューマンの交響曲第2番。
 初めての方も、そうでない方も、お気軽にお越しください！
 
-詳しくは[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)まで。
+詳しくは[チケット販売ページ](https://teket.jp/1776/44429?uid=zenn)まで。
 <!-- textlint-disable -->
 :::
 <!-- textlint-disable -->
@@ -632,6 +632,6 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 >
 > [![](/images/regular-14.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-14)
 >
-> 詳細は[チケット販売サービス teket](https://teket.jp/1776/47046?uid=zenn)にて
+> 詳細は[チケット販売ページ](https://teket.jp/1776/44429?uid=zenn)にて
 
 <!-- end long upcoming concert announcement -->
