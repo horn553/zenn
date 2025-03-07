@@ -1,5 +1,5 @@
 ---
-title: "【SvelteKit】コンポーネントの描画内容を取得する【記事の冒頭抜粋】"
+title: "【SvelteKit】コンポーネントの冒頭文字列を取得する【記事の冒頭抜粋】"
 emoji: "📚"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit", "css"]
