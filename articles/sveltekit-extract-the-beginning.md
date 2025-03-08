@@ -62,7 +62,13 @@ https://ja.vite.dev/guide/assets.html#importing-asset-as-string
 
 ### 冒頭文字列の抽出
 
-簡単のために正規表現で不要部分を削除する方法をとります。
+本当であれば、Svelteの字句解析・構文解析を行うべきでしょうか。
+例えば、Svelteには`parse()`や`compile()`など、抽象構文木へ変換する組み込み関数があります。
+これらを利用することで、より厳格な処理ができそうです。
+
+https://svelte.dev/docs/svelte/svelte-compiler
+
+しかし、今回は簡単のために正規表現で不要部分を削除する方法をとります。
 
 具体的には、次の要素を削除します。
 コンポーネントの内容に合わせて、削除する内容は調整する必要があります。
@@ -89,12 +95,6 @@ function convertToDescription(rawPost: string): string {
     .substring(0, 200);  // 十分に長い部分を抽出
 }
 ```
-
-本当であれば、Svelteの字句解析・構文解析を行うべきでしょうか。
-例えば、Svelteには`parse()`や`compile()`など、抽象構文木へ変換する組み込み関数があります。
-これらを利用することで、より厳格な処理ができそうです。
-
-https://svelte.dev/docs/svelte/svelte-compiler
 
 ## CSSプロパティ「line-clamp」
 
