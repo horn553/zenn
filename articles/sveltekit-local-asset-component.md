@@ -1,5 +1,5 @@
 ---
-title: "【SvelteKit】「ローカルなコンポーネント・アセット」というアイデア"
+title: "【SvelteKit】「ローカルなアセット・コンポーネント」というアイデア"
 emoji: "💡"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["svelte", "sveltekit"]
@@ -33,46 +33,90 @@ published: false
 
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）では、ホームページやブログをSvelteKitを用いて開発しています。
 
-小規模ながらのサイトの開発・保守を続ける中で、SvelteKitにおいて「ローカルなコンポーネント・アセット」という概念が有用なのではないか？という私見が生まれました。
+小規模ながらのサイトの開発・保守を続ける中で、SvelteKitにおいて「ローカルなアセット・コンポーネント」という概念が有用なのではないか？という私見が生まれました。
 今回はそれについてまとめていきます。
 
 私が調べた限りでは類似の意見を見つけきれなかったのですが、もし心あたりがある方がいらっしゃいましたら、教えていただけると嬉しいです！
 
 ---
 
-## コンポーネントの配置
+## アセット
 
-記事タイトルの「コンポーネント・アセット」という順序には、意図があります。
-コンポーネントと、それに従属するアセットという意味合いをもっています。
-そのため、まずはコンポーネントの配置について論じます。
+アセットの管理、コンポーネントの管理それぞれについて、順を追って述べていきます。
+まずはアセットについてです。
 
-### `$lib/` こと `/src/lib/`
+公式ドキュメントには、2通りの管理方法が記載されています。
+すなわち、`/static` への配置と、Viteのビルトイン・ハンドリングを用いる方法です。
 
-SvelteKitでは、`/src/lib` にライブラリのコード（ユーティリティやコンポーネント）を格納することを想定しています[^1]。
-このディレクトリには、`$lib` エイリアスがデフォルトで指定されています[^2]。
+それぞれについて述べ、その後に比較検討を行います。
 
-[^1]: [プロジェクト構成 • Docs • Svelte](https://svelte.jp/docs/kit/project-structure#Project-files-src)
-[^2]: このようなエイリアスは他に作成することもできます[^3]。
-しかし、`$lib` はユーザー作成のエイリアスとは別の、ビルトイン・エイリアスとして管理されています。
-[^3]: [Configuration • Docs • Svelte](https://svelte.jp/docs/kit/configuration#alias)
+### `/static`
 
-例えば、外部リンクを配置するコンポーネントを考えます。
+直接配信されるべきアセット、すなわちファビコンなどは `/static` に配置することとなっています。
 
-```html:/src/lib/ExternalLink.svelte
+https://svelte.jp/docs/kit/project-structure#Project-files-static
+
+ここに配置することで、ビルド後も `/static` をドキュメントルートに見立てたパス関係で配信されるようになります。
+例えば、`/static/favicon.ico` は `example.com/favicon.ico` として配信されるようになります。
+
+この機能を使うと、次のようなソースコードを記述できます。
+
+```html:/src/routes/+layout.svelte
 <script>
-  // /src/lib/external-link.svg が配置されているとする
-  import icon from './external-link.svg'
-  let { href, children } = $props();
+  let { children } = $props();
 </script>
 
-<!-- noreferrer, noopener の有無については考慮しない -->
-<a {href}>
-  {@render children()}
-  <img src={icon} alt="（外部リンク）">
-</a>
+<header>
+    <!-- /static/logo.svg を配置しているものとする -->
+    <a href="/"><img src="/logo.svg" alt="Orchestra Canvas Tokyo"></a>
+</header>
+
+{@render children()}
 ```
 
-このような記述は
+基本の `+layout.svelte`[^1]をベースに、リンク付きロゴ画像を貼り付けたものです。
+SvelteKitやViteを介することなく、HTMLの基本的な構文として、絶対リンクで画像が指定されています。
+
+[^1]: [ルーティング • Docs • Svelte](https://svelte.jp/docs/kit/routing#layout-layout.svelte)
+
+### Viteのビルトイン・ハンドリング
+
+しかし、画像のベストプラクティス[^2]として、ドキュメントには「Viteのビルトイン・ハンドリング」を用いる方法が紹介されています。
+これに則って先のコードを修正すると、次のような形になります。
+
+```html:/src/routes/+layout.svelte
+<script>
+  // 先ほどとは異なり、/src/routes/logo.svg を配置しているものとする
+  import logo from './logo.svg'; // 相対パス指定となっていることに注意
+  let { children } = $props();
+</script>
+
+<header>
+    <a href="/"><img src={logo} alt="Orchestra Canvas Tokyo"></a>
+</header>
+
+{@render children()}
+```
+
+これも問題なく動作しますが、Viteによる処理を介しています。
+
+Viteのドキュメント[^3]によると、次のような処理が行われます。
+
+- ファイル名の変更: `logo.xxxxxxx.png` とハッシュ様の文字列が挟まれる
+- 一定サイズ[^4]以下である場合、インライン化される
+
+これらの処理により、それぞれキャッシュによる更新遅延の回避、読み込みパフォーマンスの改善が期待されます。
+
+[^2]: [Introduction / Dynamic attributes • Svelte Tutorial](https://svelte.jp/tutorial/svelte/dynamic-attributes)。
+同ページでは@sveltejs/enhanced-imgやCDNを選択肢に入れて、ベストプラクティスについて議論されている。
+この議論については、本記事の要点とはずれるため割愛する。
+
+[^3]: [静的アセットの取り扱い | Vite](https://ja.vite.dev/guide/assets)
+
+[^4]: サイズ閾値はビルドオプションの `build.assetsInlineLimit` で指定される。
+詳細は[ビルドオプション | Vite](https://ja.vite.dev/config/build-options#build-assetsinlinelimit)に記述あり。
+
+### 使い分け
 
 ## おわりに
 
