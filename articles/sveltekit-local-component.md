@@ -10,7 +10,10 @@ published: false
 
 ## まとめ
 
-- ●
+- コンポーネントの記述方法は、スコープの広さが異なるいくつかの方法が考えられる
+  - snippet < ローカルなコンポーネント < 共通ライブラリとしてのコンポーネント
+  - 必要最低限のスコープを有するコンポーネントを採用すべき
+- ディレクトリ構造を有するコンポーネントの場合、`+page.svelte` のように、`+component.svelte` と命名するのもオススメ
 
 <!-- begin short upcoming concert announcement -->
 
@@ -31,15 +34,20 @@ published: false
 
 ## 背景
 
-前回の記事[「【SvelteKit】結局、アセット(画像)はどこに配置するのか【「ローカルなアセット」というアイデア】」](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)のコンポーネント版です。
-前回の記事を読んでいただくと、見通しよくお読みいただけると思います。
-
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）では、ホームページやブログをSvelteKitを用いて開発しています。
 
-小規模ながらのサイトの開発・保守を続ける中で、SvelteKitにおいて「ローカルなアセット」という概念が有用なのではないか？という私見が生まれました。
+小規模ながらのサイトの開発・保守を続ける中で、SvelteKitにおいて「ローカルなコンポーネント」という概念が有用なのではないか？という私見が生まれました。
 今回はそれについてまとめていきます。
 
 私が調べた限りでは類似の意見を見つけきれなかったのですが、もし心あたりがある方がいらっしゃいましたら、教えていただけると嬉しいです！
+
+:::message
+前回の記事[「【SvelteKit】結局、アセット(画像)はどこに配置するのか【「ローカルなアセット」というアイデア】」](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)のコンポーネント版です。
+
+前回の記事を読んでいただくと、より見通しよく読んでいただけるかと思います！
+<!-- textlint-disable -->
+:::
+<!-- textlint-disable -->
 
 ---
 
@@ -142,11 +150,58 @@ https://svelte.jp/docs/svelte/snippet
 一般のプログラミングと同様に、「本当に同じことを意味する処理なのか」を検討する必要がありますが、汎用性が高く強力な一手です。
 強力ではある分、依存関係が不明瞭になり、コードの見通しの悪さの原因となりえることに留意する必要があります。
 
-●例
+```plain:プロジェクト構成
+/src/
+├ lib/
+│└ Logo
+│　├ Logo.svelte  ※ 任意のファイル名を指定可能
+│　├ logo-large.svg
+│　└ logo-small.svg
+└ routes/
+　└ +layout.svelte
+```
+
+```html:Logo.svelte
+<script>
+  import logoLarge from './logo-large.svg'
+  import logoSmall from './logo-small.svg'
+</script>
+
+<a href="/">
+  <picture>
+    <srcset srcset={logoLarge} media="(min-width: 600px)">
+    <img src={logoSmall} alt="Orchestra Canvas Tokyo">
+  </picture>
+</a>
+
+<style>
+  img {
+    /* 省略 */
+  }
+</style>
+```
+
+```html:+layout.svelte
+<script>
+  import Logo from '$lib/Logo/Logo.svelte';
+  let { children } = $props();
+</script>
+
+<header>
+  <Logo />
+</header>
+
+{@render children()}
+
+<footer>
+  <Logo />
+</footer>
+```
 
 #### ファイルの命名案：`+component.svelte`
 
-ちょうど、ルーティングにおいて `+page.svelte` や `+layout.svelte` を作成するように、コンポーネントに対しても `+component.svelte` と命名するのはいかがでしょうか？
+先の例にも上げましたが、ディレクトリ構造をもつコンポーネントについて、コンポーネントに `+component.svelte` と命名するのはいかがでしょうか？
+ちょうど、ルーティングにおいて `+page.svelte` や `+layout.svelte` を作成する形式をまねた者です。
 
 [以前の記事で述べた](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)ローカルなアセットの考え方を、コンポーネントに対するアセットにも応用することができます。
 アセットを用いない場合は、シンプルさを優先してディレクトリ構造を採用しないのも手です。
@@ -154,27 +209,34 @@ https://svelte.jp/docs/svelte/snippet
 これはオリジナルの管理ですので、将来的に問題が生じる可能性を否定できません。
 しかし、`routes/` 配下と統一感のある管理ができるため、オススメです。
 
-```plain:プロジェクト構成（抜粋）
+先の例について、この方式を採用すると次のようになります。
+
+```plain:プロジェクト構成
 /src/
-└ lib/
-　├ Footer.svelte
-　└ Header/
-　　├ +component.svelte
-　　└ logo.svg
+├ lib/
+│└ Logo
+│　├ +component.svelte
+│　├ logo-large.svg
+│　└ logo-small.svg
+└ routes/
+　└ +layout.svelte
 ```
 
 ```html:+layout.svelte
 <script>
-  import Header from '$lib/Header/+component.svelte';
-  import Footer from '$lib/Footer.svelte';
+  import Logo from '$lib/Logo/+component.svelte';
   let { children } = $props();
 </script>
 
-<Header />
+<header>
+  <Logo />
+</header>
 
 {@render children()}
 
-<Footer />
+<footer>
+  <Logo />
+</footer>
 ```
 
 ---
