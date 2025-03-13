@@ -2,7 +2,7 @@
 title: "【SvelteKit】「ローカルなコンポーネント」というアイデア"
 emoji: "💡"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["svelte", "sveltekit", "vite"]
+topics: ["svelte", "sveltekit"]
 publication_name: "orch_canvas"
 published: false
 # published_at: 2025-03-03 06:00
