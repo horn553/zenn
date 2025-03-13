@@ -202,9 +202,9 @@ https://svelte.jp/docs/svelte/snippet
 #### ファイルの命名案：`+component.svelte`
 
 先の例にも上げましたが、ディレクトリ構造をもつコンポーネントについて、コンポーネントに `+component.svelte` と命名するのはいかがでしょうか？
-ちょうど、ルーティングにおいて `+page.svelte` や `+layout.svelte` を作成する形式をまねた者です。
+ちょうど、ルーティングにおいて `+page.svelte` や `+layout.svelte` を作成する形式をまねたものです。
 
-[以前の記事で述べた](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)ローカルなアセットの考え方を、コンポーネントに対するアセットにも応用することができます。
+[以前の記事で述べた](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)「ローカルなアセット」の考え方を、コンポーネントに対するアセットにも応用することができます。
 アセットを用いない場合は、シンプルさを優先してディレクトリ構造を採用しないのも手です。
 
 これはオリジナルの管理ですので、将来的に問題が生じる可能性を否定できません。
