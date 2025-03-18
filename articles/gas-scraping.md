@@ -10,8 +10,8 @@ published: false
 
 ## まとめ
 
-- リクエストの送信には、UrlFetchAppクラスを用いる
-- リクエストの解釈には、正規表現を用いるのが手
+- HTTPリクエストの送信には、UrlFetchAppクラスを用いる
+- HTTPレスポンスの解釈には、正規表現を用いるのが手
 - 複雑な要件では、HTTPヘッダーの処理が必要
 
 <!-- begin short upcoming concert announcement -->
