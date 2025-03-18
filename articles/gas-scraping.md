@@ -65,11 +65,11 @@ https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/Messages
     - ヘッダー
     - ボディ
 
-冗長さ回避のため、各単語冒頭の「HTTP」を省略していますが、これからは適宜HTTP付きで表記しています。
+冗長さ回避のため、各単語冒頭の「HTTP」を省略していますが、以降は適宜HTTP付きで表記していきます。
 
 ## クッキーの実体
 
-クッキーは、HTTPメッセージ上では特別なHTTPヘッダーとしてやり取りされています。
+クッキーは、特別なHTTPヘッダーとしてやり取りされています。
 
 https://developer.mozilla.org/ja/docs/Web/HTTP/Guides/Cookies
 
@@ -164,7 +164,7 @@ const response2 = UrlFetchApp.fetch('https://example.com/', {
 });
 ```
 
-`payload`にJavaScriptオブジェクトを指定した場合、フォーム・データとして扱われるようです。
+`payload`にJavaScriptオブジェクトを指定した場合、フォームデータとして扱われるようです。
 `contentType`は自動的に`application/x-www-form-urlencoded`か`multipart/form-data`とされるようです[^1]。
 
 [^1]: https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app?hl=ja#fetchurl,-params
@@ -202,7 +202,7 @@ const response2 = UrlFetchApp.fetch('https://example.com/', {
 ## HTTPレスポンスの解釈
 
 後半戦です。
-こちらの調整こそがスクレイピングの醍醐味です！
+この調整こそがスクレイピングの山場です！
 
 ### HTMLの解釈
 
@@ -212,6 +212,7 @@ https://developer.mozilla.org/ja/docs/Web/JavaScript/Guide/Regular_expressions
 
 正規表現の実際は、それぞれのHTMLに大きく依存します。
 ここでは、よく使うCSRFトークンを取得する例を示します。
+
 実際には、テストツールを使って一意かつ再現性のある値が取得できるか、検証していくことになると思います。
 
 https://regex101.com/
