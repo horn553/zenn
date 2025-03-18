@@ -96,11 +96,11 @@ HTTPヘッダーのやり取りとして、自力で記述する必要があり�
 ```mermaid
 sequenceDiagram
     GAS->>+Webサイト: GET /login
-    Webサイト-->>-GAS: セッションID<br>HTML<br>CSRFトークン
-    GAS->>+Webサイト: POST /login<br>セッションID<br>認証情報、CSRFトークン
-    Webサイト-->>-GAS: セッションID<br>HTML<br>CSRFトークン
-    GAS->>+Webサイト: GET /user/xxx/data.json<br>セッションID
-    Webサイト-->>-GAS: 欲しい情報
+    Webサイト-->>-GAS: セッションID (Cookie (ヘッダー))<br>CSRFトークン (HTML (ボディー))
+    GAS->>+Webサイト: POST /login<br>セッションID (Cookie (ヘッダー))<br>認証情報、CSRFトークン (ボディー)
+    Webサイト-->>-GAS: HTML (ボディー)
+    GAS->>+Webサイト: GET /user/xxx/data.json<br>セッションID (Cookie (ヘッダー))
+    Webサイト-->>-GAS: 欲しい情報 (ボディー)
 ```
 
 手順を分解して整理すると、次の要素で成り立っていることが分かります。
