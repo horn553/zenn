@@ -132,7 +132,7 @@ https://developers.google.com/apps-script/reference/url-fetch/url-fetch-app?hl=j
 const response1 = UrlFetchApp.fetch('https://example.com/');
 
 // 動的なクエリパラメータを有する場合のリクエスト
-const url = new Url('https://example.com/');
+const url = new URL('https://example.com/');
 url.params.append('hoge', 'fuga');
 const response2 = UrlFetchApp.fetch(url.toString()); // https://example.com/?hoge=fuga へリクエストされる
 ```
@@ -247,8 +247,8 @@ const headers = response.getAllHeaders();
 const hoge = headers['hoge'];
 
 // Cookieの取得
-// e.g.) rawCookies = ['hoge=fuga', 'fuga=hoge']
-const rawCookies = headers['Set-Cookie'];
+// e.g.) cookies = ['hoge=fuga', 'fuga=hoge']
+const cookies = headers['Set-Cookie'];
 ```
 
 ---
