@@ -13,7 +13,7 @@ published_at: 2025-03-24 06:00
 - コンポーネントの記述方法は、スコープの広さが異なるいくつかの方法が考えられる
   - snippet < ローカルなコンポーネント < 共通ライブラリとしてのコンポーネント
   - 必要最低限のスコープを有するコンポーネントを採用すべき
-- ディレクトリ構造を有するコンポーネントの場合、`+page.svelte` のように、`+component.svelte` と命名するのもオススメ
+- ディレクトリ構造を有するコンポーネントの場合、`+page.svelte` のように、`+component.svelte` と命名するのも一考（諸説あり）
 
 <!-- begin short upcoming concert announcement -->
 
