@@ -1,6 +1,6 @@
 ---
 title: "【Matter.js】実装のTips――高DPI対応、空間のリサイズ、削除ほか"
-emoji: "📚"
+emoji: "🎱"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["matterjs"]
 publication_name: "orch_canvas"
