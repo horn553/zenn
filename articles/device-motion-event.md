@@ -94,7 +94,7 @@ https://developer.mozilla.org/ja/docs/Web/API/ScreenOrientation/type
 
 https://blog.oimo.io/2023/11/28/devicemotion/
 
-先のコードを修正します。
+以上の情報をもとに、先のコードを修正します。
 
 ```ts
 window.addEventListener('devicemotion', (e: DeviceMotionEvent) => {
@@ -293,12 +293,6 @@ export class DeviceMotionController {
     let showPermissionToast = $state(false);
 
     afterNavigate(() => {
-        pawEngine = new PawEngine(
-            document.body,
-            [window.innerWidth, window.innerHeight],
-            window.devicePixelRatio
-        );
-
         const updatePermissionStatusCallback = (permitted: boolean) => {
             showPermissionToast = !permitted;
         };
@@ -317,7 +311,7 @@ export class DeviceMotionController {
 
 <div class="toast" class:show={showPermissionToast}>
     <p>ぜひ、加速度センサー付きでご覧ください！</p>
-    <button on:click={onclickGrantPermission}>進む</button>
+    <button onclick={onclickGrantPermission}>進む</button>
 </div>
 
 <style>
