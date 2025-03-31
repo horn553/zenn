@@ -1,8 +1,8 @@
 ---
-title: "【Matter.js】実装のTips――高DPI対応、空間のリサイズ、削除ほか"
-emoji: "🎱"
+title: "【物理演算】エイプリルフールを支えた技術【Matter.js】"
+emoji: "🐾"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["matterjs", "javascript", "typescript"]
+topics: ["matterjs", "typescript", "svelte", "sveltekit"]
 publication_name: "orch_canvas"
 published: false
 # published_at: 2025-04-07 06:00
@@ -11,8 +11,8 @@ published: false
 ## まとめ
 
 - Matter.jsは、Webサイト上で動作する2D物理演算ライブラリ
-- 物理エンジン空間や描画空間のサイズを動的に変更できる
-- 円に画像を貼り付けたり、互いに跳ねさせたり
+- これを使って、インタラクティブな肉球を背景にするエイプリルフール企画を作成した
+- Matter.jsの基本的な実装から、細かいTipsをまとめた
 
 <!-- begin short upcoming concert announcement -->
 
@@ -34,17 +34,106 @@ published: false
 
 https://www.orch-canvas.tokyo/nyanvas
 
-今回は、物理演算周りの実装について、知見をまとめてみました！
+今回は、物理演算周りの実装について、知見をまとめていきます。
+加速度センサーを用いていますが、そこはクセのある知見となりましたのでまた来週に……
 
-基本的な実装方法などは、色々な記事に分かりやすくまとまっていますので、あまり情報がない枝葉の部分を中心に取り上げていきます。
+偉大なる先人方の記事も参考になりますので、ぜひ！
 
 https://zenn.dev/chot/articles/21d6d94c314979
 
 https://zenn.dev/sdkfz181tiger/books/5fb7ad6afa3a5e
 
+実際に動作する、完成形のコードは、こちらのブランチにまとまっています。
+
+https://github.com/orchestra-canvas-tokyo/homepage/tree/develop/2025-04-01
+
 ---
 
-## 物理演算空間の調整
+## 要件定義
+
+次のような要件で実装を進めました。
+
+- Svelte + SvelteKitで開発されたホームページ上に実装する
+- 背景に物理演算空間を用意する
+- 重力の効いた肉球を配置する
+
+完成系の動画は次のようになります。
+
+<!-- ●動画 -->
+
+## 物理演算空間の準備
+
+今回は、物理演算を管理したクラスを用意しました。
+基本的な物理演算空間の用意まで一気に実装してしまいます。
+
+```ts:呼び出し元
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const pawEngine = new PawEngine(document.body, [width, height]);
+```
+
+```ts:PawEngine.ts
+export class PawEngine {
+    private engine: Matter.Engine;
+    private render: Matter.Render;
+    private boxBodies: Matter.Body[] = [];
+    private paws: Matter.Body[] = [];
+
+    constructor(element: HTMLElement, [width, height]: [number, number]) {
+        this.engine = Matter.Engine.create();
+        this.render = Matter.Render.create({
+            element: element,
+            engine: this.engine,
+            options: {
+                width,
+                height,
+                hasBounds: true,
+                background: '',
+                wireframes: false
+            }
+        });
+
+        // 箱（壁の組み合わせ）を用意する
+        this.updateBox(width, height);
+
+        // おまじない
+        Matter.Render.run(this.render);
+        Matter.Runner.run(Matter.Runner.create(), this.engine);
+        Matter.World.add(this.engine.world, mouseConstraint)
+    }
+
+    updateBox(width: number, height: number) {
+        if (0 < this.boxBodies.length) Matter.Composite.remove(this.engine.world, this.boxBodies);
+
+        const thickness = 9999;
+        this.boxBodies = [
+            // 天井
+            Matter.Bodies.rectangle(width / 2, -thickness / 2, width, thickness, {
+                isStatic: true
+            }),
+
+            // 床
+            Matter.Bodies.rectangle(width / 2, height + thickness / 2, width, thickness, {
+                isStatic: true
+            }),
+
+            // 壁
+            Matter.Bodies.rectangle(-thickness / 2 - 1, height / 2, thickness, height, {
+                isStatic: true
+            }),
+            Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height, {
+                isStatic: true
+            })
+        ];
+
+        Matter.Composite.add(this.engine.world, this.boxBodies);
+    }
+}
+```
+
+これに味付けをしていきます。
+肉球に関する処理は、後ほど章だてします。
 
 ### 高DPIディスプレイ対応
 
@@ -55,152 +144,265 @@ https://developer.mozilla.org/ja/docs/Web/API/Window/devicePixelRatio
 
 Matter.js側では、Renderの初期化時の引数で比率を設定できます。
 
-```ts
-const parentElement = document.body;
+```ts:呼び出し元
 const width = window.innerWidth;
 const height = window.innerHeight;
 const pixelRatio = window.devicePixelRatio;
 
-const engine = Matter.Engine.create()
-const render = Matter.Render.create({
-    element: parentElement,
-    engine,
-    options: {
-        width,
-        height,
-        hasBounds: true,
-        pixelRatio,
-        wireframes: false
-    }
-});
+const pawEngine = new PawEngine(document.body, [width, height], pixelRatio);
 ```
 
-### リサイズ
+```diff ts:PawEngine.ts
+-constructor(element: HTMLElement, [width, height]: [number, number]) {
++constructor(element: HTMLElement, [width, height]: [number, number], pixelRatio: number) {
+    this.engine = Matter.Engine.create();
+    this.render = Matter.Render.create({
+        element: element,
+        engine: this.engine,
+        options: {
+            width,
+            height,
+            hasBounds: true,
+            background: '',
++           pixelRatio,
+            wireframes: false
+        }
+    });
+```
+
+### 画面リサイズ対応
 
 今回作成したWebサイトでは、空間いっぱいに背景として広がる、物理演算空間を用意しました。
 画面のリサイズ（ウィンドウサイズ変更、画面の回転、アドレスバーの引っ込み）で物理演算空間のサイズを変更する必要があります。
 
-先のコードに追加実装してみます。
+先のクラスに追加実装していきます。
 
-```ts
-const parentElement = document.body;
-const width = window.innerWidth;
-const height = window.innerHeight;
-const pixelRatio = window.devicePixelRatio;
-
-const engine = Matter.Engine.create()
-const render = Matter.Render.create({
-    element: parentElement,
-    engine,
-    options: {
-        width,
-        height,
-        hasBounds: true,
-        pixelRatio,
-        wireframes: false
-    }
-});
-
+```ts:呼び出し元
 window.addEventListener('resize', () => {
     const newWidth = window.innerWidth;
     const newHeight = window.innerHeight;
-
-    // 物理空間のサイズを変更
-    render.bounds.max.x = newWidth;
-    render.bounds.max.y = newHeight;
-
-    // 描画キャンバスのサイズを変更
-    render.canvas.style.width = `${newWidth}px`;
-    render.canvas.style.height = `${newHeight}px`;
+    
+    pawEngine.resize(newWidth, newHeight);
 })
 ```
 
-### 削除
+```ts:PawEngine.ts
+resize(width: number, height: number) {
+    // 周囲の壁を更新
+    this.updateBox(width, height);
 
-canvas要素を削除することで対応できます。
+    // 物理エンジンのサイズを変更
+    this.render.bounds.max.x = width;
+    this.render.bounds.max.y = height;
 
-```ts
-render.canvas.remove();
+    // 描画キャンバスのサイズを変更
+    this.render.canvas.style.width = `${width.toString()}px`;
+    this.render.canvas.style.height = `${height.toString()}px`;
+}
 ```
 
-## 円に関する微調整
+### ページ遷移時の後片付け
 
-肉球を円として描画していますが、小気味よく動作するような微調整を加えました。
+今回の要件では、様々なページの背景に表示したいと考えているため、`+layout.svelte`を利用するのがよさそうです。
+
+しかし、そのままではページ遷移時に前のキャンバスが残ってしまいます。
+適切に後片付けを行います。
+
+```ts:layout.svelte
+import { beforeNavigate } from '$app/navigation';
+
+beforeNavigate(() => {
+    pawEngine.destroy();
+});
+```
+
+```ts:PawEngine.ts
+destroy() {
+    this.render.canvas.remove();
+}
+```
+
+## 肉球（円）の生成
+
+まずは、お決まりの基本的な実装コードを追加します。
+今回は、面白みとして肉球のテクスチャにランダム要素を追加していきます。
+
+```ts:PawEngine.ts
+static getPawTexture(): string {
+    const value = Math.random();
+
+    // 5%の確率で金色を
+    // 10%の確率で肉球色を
+    if (value < 0.05) return pawGold;
+    if (value < 0.05 + 0.1) return pawNikukyu;
+    return paw;
+}
+
+async addPaw(x: number, y: number) {
+    const circleSize = 30;
+    const imageSize = 1000;
+    const mass = 75;
+
+    const scale = circleSize / (imageSize / 2);
+    const paw = Matter.Bodies.circle(x, y, circleSize, {
+        mass,
+        render: {
+            sprite: {
+                texture: PawEngine.getPawTexture(),
+                xScale: scale,
+                yScale: scale
+            }
+        }
+    });
+
+    Matter.World.add(this.engine.world, paw);
+    this.paws.push(paw);
+}
+```
+
+この後、小気味よく動作するような微調整を加えていきます。
 
 ### 跳ねさせる
 
-円だけでなく、壁にも反発係数を設定する必要があります。
-重さも設定する必要があります。
+反発係数`restitution`を、初期化時などに設定することで可能になります。
 
-```ts
-// engine、renderを定義済みとする
+一例として、肉球（円）に追加するコードをお示しします。
 
-const width = window.innerWidth;
-const height = window.innerHeight;
-const wallThickness = 999;
-const restitution = 1;
+円だけでなく、壁にも反発係数を設定する必要がある点に注意が必要です。
 
-const walls = [
-    // 天井
-    Matter.Bodies.rectangle(width / 2, -thickness / 2, width, thickness, {
-        restitution: this.restitution,
-        isStatic: true
-    }),
+```diff ts:PawEngine.ts
++private restitution = 1;
 
-    // 床
-    Matter.Bodies.rectangle(width / 2, height + thickness / 2, width, thickness, {
-        restitution: this.restitution,
-        isStatic: true
-    }),
+async addPaw(x: number, y: number) {
+    const circleSize = 30;
+    const imageSize = 1000;
+    const mass = 75;
 
-    // 壁
-    Matter.Bodies.rectangle(-thickness / 2 - 1, height / 2, thickness, height, {
-        restitution: this.restitution,
-        isStatic: true
-    }),
-    Matter.Bodies.rectangle(width + thickness / 2, height / 2, thickness, height, {
-        restitution: this.restitution,
-        isStatic: true
-    })
-];
+    const scale = circleSize / (imageSize / 2);
+    const paw = Matter.Bodies.circle(x, y, circleSize, {
+        mass,
++       restitution: this.restitution,
+        render: {
+            sprite: {
+                texture: PawEngine.getPawTexture(),
+                xScale: scale,
+                yScale: scale
+            }
+        }
+    });
 
-Matter.Composite.add(engine.world, walls)
-
-// 円を描画する
-const circleSize = 30;
-const circleMass = 75;
-const circle = Matter.Bodies.circle(100, 100, circleSize, {
-    mass: circleMass,
-    restitution
-})
+    Matter.World.add(this.engine.world, paw);
+    this.paws.push(paw);
+}
 ```
 
-### 画像を貼る
+### 画像の対応形式
 
-ソースコードを覗くに、`.jpg`、`.gif`、`.gif`が対応しているようです。
+ソースコードを覗くに、`.jpg`、`.gif`、`.gif`にのみ対応しているようです。
 
 https://github.com/liabru/matter-js/blob/acb99b6f8784c809b940f1d2cf745427e088e088/src/render/Render.js#L1534-L1543
 
-```ts
-// 円を描画する
-const circleSize = 30;
-const circleMass = 75;
+WebPやAVIFが対応していないのはまだしも、`.jpeg`も対応していない点には注意が必要そうです。
 
-const circleTexture = './assets/circle.png';
-const imageSize = 1000;
-const textureScale = circleSize / (imageSize / 2);
+### 肉球（円）をクリックで消去する
 
-const circle = Matter.Bodies.circle(100, 100, circleSize, {
-    mass: circleMass,
-    restitution,
-    render: {
-        sprite: {
-            texture: circleTexture,
-            xScale: textureScale,
-            yScale: textureScale
+エイプリルフール中は、ホームページ上のあらゆるページに肉球が出現します。
+そのため、UXの低下を最低限とするために、肉球をクリックで消去する機能を追加することにします。
+
+反対に、肉球以外をクリックした場合は、肉球が増殖することにしてみます。
+
+Matter.jsにはクリックイベントがあるので、それを利用することとします。
+
+```diff ts:PawEngine.ts
+constructor(element: HTMLElement, [width, height]: [number, number], pixelRatio: number) {
+    this.engine = Matter.Engine.create();
+    this.render = Matter.Render.create({
+        element: element,
+        engine: this.engine,
+        options: {
+            width,
+            height,
+            hasBounds: true,
+            background: '',
+            wireframes: false
         }
-    }
-})
+    });
+
+    // 箱（壁の組み合わせ）を用意する
+    this.updateBox(width, height);
+
+    // おまじない
+    Matter.Render.run(this.render);
+    Matter.Runner.run(Matter.Runner.create(), this.engine);
+    Matter.World.add(this.engine.world, mouseConstraint)
+
++    // クリックイベントを作成する
++    const mouse = Matter.Mouse.create(this.render.canvas);
++    const mouseConstraint = Matter.MouseConstraint.create(this.engine, {
++        mouse: mouse,
++        constraint: { stiffness: 0.2, render: { visible: false } }
++    });
+}
+
++onClick(x: number, y: number) {
++    let pawRemoveFlag = false;
++    this.paws.forEach((paw, index) => {
++        const dx = paw.position.x - x;
++        const dy = paw.position.y - y;
++        const distance = Math.sqrt(dx * dx + dy * dy);
++
++        // 型ガード的な処理
++        if (!paw?.circleRadius) return;
++
++        if (distance < paw.circleRadius) {
++            // クリック範囲が肉球内
++            Matter.World.remove(this.engine.world, paw);
++            this.paws.splice(index, 1);
++            pawRemoveFlag = true;
++        }
++    });
++
++    // 肉球外のクリックである
++    if (!pawRemoveFlag) this.addPaw(x, y);
++}
+```
+
+### 画面サイズ変更時に肉球（円）を移動
+
+画面の向き変更など、多きなサイズ変更時に肉球が画面外へ飛んでいってしまいます。
+これでは寂しいので、画面内に移動するような処理を追加していきます。
+
+```diff ts:PawEngine.ts
+resize(width: number, height: number) {
++    // 肉球の位置を更新
++    this.paws.forEach((paw) => {
++        const x = paw.position.x;
++        const y = paw.position.y;
++
++        const newX = (x / this.render.bounds.max.x) * width;
++        const newY = (y / this.render.bounds.max.y) * height;
++
++        Matter.Body.setPosition(paw, { x: newX, y: newY });
++
++        // 肉球に慣性のような速度を与える
++        const velocityCoefficient = 0.01;
++        Matter.Body.setVelocity(paw, {
++            x: velocityCoefficient * (newX - x),
++            y: velocityCoefficient * (newY - y)
++        });
++    });
++
+    // 周囲の壁を更新
+    this.updateBox(width, height);
+
+    // 物理エンジンのサイズを変更
+    this.render.bounds.max.x = width;
+    this.render.bounds.max.y = height;
+
+    // 描画キャンバスのサイズを変更
+    this.render.canvas.style.width = `${width.toString()}px`;
+    this.render.canvas.style.height = `${height.toString()}px`;
+}
 ```
 
 ---
