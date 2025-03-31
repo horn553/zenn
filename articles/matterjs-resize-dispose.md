@@ -208,7 +208,7 @@ resize(width: number, height: number) {
 しかし、そのままではページ遷移時に前のキャンバスが残ってしまいます。
 適切に後片付けを行います。
 
-```ts:layout.svelte
+```ts:+layout.svelte
 import { beforeNavigate } from '$app/navigation';
 
 beforeNavigate(() => {
@@ -228,6 +228,10 @@ destroy() {
 今回は、面白みとして肉球のテクスチャにランダム要素を追加していきます。
 
 ```ts:PawEngine.ts
+import paw from './paws/paw.png';
+import pawNikukyu from './paws/paw-nikukyu.png';
+import pawGold from './paws/paw-gold.png';
+
 static getPawTexture(): string {
     const value = Math.random();
 
@@ -262,13 +266,10 @@ async addPaw(x: number, y: number) {
 
 この後、小気味よく動作するような微調整を加えていきます。
 
-### 跳ねさせる
+### 跳ねるようにする
 
 反発係数`restitution`を、初期化時などに設定することで可能になります。
-
 一例として、肉球（円）に追加するコードをお示しします。
-
-円だけでなく、壁にも反発係数を設定する必要がある点に注意が必要です。
 
 ```diff ts:PawEngine.ts
 +private restitution = 1;
@@ -296,7 +297,7 @@ async addPaw(x: number, y: number) {
 }
 ```
 
-### 画像の対応形式
+### テクスチャ画像の対応形式
 
 ソースコードを覗くに、`.jpg`、`.gif`、`.gif`にのみ対応しているようです。
 
@@ -304,7 +305,7 @@ https://github.com/liabru/matter-js/blob/acb99b6f8784c809b940f1d2cf745427e088e08
 
 WebPやAVIFが対応していないのはまだしも、`.jpeg`も対応していない点には注意が必要そうです。
 
-### 肉球（円）をクリックで消去する
+### クリックで追加・消去する
 
 エイプリルフール中は、ホームページ上のあらゆるページに肉球が出現します。
 そのため、UXの低下を最低限とするために、肉球をクリックで消去する機能を追加することにします。
@@ -367,7 +368,7 @@ constructor(element: HTMLElement, [width, height]: [number, number], pixelRatio:
 +}
 ```
 
-### 画面サイズ変更時に肉球（円）を移動
+### 画面サイズ変更時も画面内に留まるように
 
 画面の向き変更など、多きなサイズ変更時に肉球が画面外へ飛んでいってしまいます。
 これでは寂しいので、画面内に移動するような処理を追加していきます。
