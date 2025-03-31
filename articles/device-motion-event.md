@@ -1,5 +1,5 @@
 ---
-title: "【Web API】加速度センサーを取得する2025【DeviceMotionEvent】"
+title: "【Web API】加速度センサーの情報を取得する 2025年版【DeviceMotionEvent】"
 emoji: "🪃"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["javascript", "typescript", "svelte", "sveltekit"]
