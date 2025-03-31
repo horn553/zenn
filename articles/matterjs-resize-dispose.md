@@ -57,9 +57,9 @@ https://github.com/orchestra-canvas-tokyo/homepage/tree/develop/2025-04-01
 - 背景に物理演算空間を用意する
 - 重力の効いた肉球を配置する
 
-完成系の動画は次のようになります。
+これではややイメージが掴みにくいかもしれませんので、実際のページを再掲しておきます。
 
-<!-- ●動画 -->
+https://www.orch-canvas.tokyo/nyanvas
 
 ## 物理演算空間の準備
 
