@@ -1,11 +1,11 @@
 ---
-title: "【物理演算】エイプリルフールを支えた技術【Matter.js】"
+title: "【Matter.js】物理演算で遊べるサイトを作る【エイプリルフール】"
 emoji: "🐾"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["matterjs", "typescript", "svelte", "sveltekit"]
 publication_name: "orch_canvas"
-published: false
-# published_at: 2025-04-07 06:00
+published: true
+published_at: 2025-04-07 06:00
 ---
 
 ## まとめ
@@ -53,7 +53,6 @@ https://github.com/orchestra-canvas-tokyo/homepage/tree/develop/2025-04-01
 
 次のような要件で実装を進めました。
 
-- Svelte + SvelteKitで開発されたホームページ上に実装する
 - 背景に物理演算空間を用意する
 - 重力の効いた肉球を配置する
 
@@ -203,7 +202,8 @@ resize(width: number, height: number) {
 
 ### ページ遷移時の後片付け
 
-今回の要件では、様々なページの背景に表示したいと考えているため、`+layout.svelte`を利用するのがよさそうです。
+今回は、Svelte＋SvelteKitで実装されたホームページに追加実装しました。
+エイプリルフール期間中はあらゆるページの背景に表示するため、`+layout.svelte`上に実装していきました。
 
 しかし、そのままではページ遷移時に前のキャンバスが残ってしまいます。
 適切に後片付けを行います。
