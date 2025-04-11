@@ -10,8 +10,12 @@ published: false
 
 ## 背景
 
-●AIで単体テストの作業工数が減っており、学ぶにうってつけの環境です。
-●「単体テストの考え方/使い方」とかに触れたい。
+AIの台頭により、単体テストの実装工数は大きく減っています。
+しかし、人間が単体テストを解釈・評価する必要があります。
+
+そこで、「単体テストの考え方/使い方」をベースに、単体テスト（特にコンポーネントの単体テスト）について、理論的な側面に注目して考えていきます。
+
+https://books.google.co.jp/books/about/%E5%8D%98%E4%BD%93%E3%83%86%E3%82%B9%E3%83%88%E3%81%AE%E8%80%83%E3%81%88%E6%96%B9_%E4%BD%BF%E3%81%84%E6%96%B9.html?id=7-mnEAAAQBAJ&source=kp_book_description&redir_esc=y
 
 <!-- begin short upcoming concert announcement -->
 
@@ -30,7 +34,7 @@ published: false
 
 コンポーネントの単体テストを考える前に、より基本たる関数の単体テストについて考えます。
 
-ここはオーケストラ団体らしく、次のような関数`getContemporaryComposers()`について考えます。
+次のような関数`getContemporaryComposers()`に注目します。
 これは、指定された作曲家と同年代に生きていた作曲家の一覧を取得する関数です。
 
 ```ts
@@ -42,7 +46,7 @@ import { getComposerLifeSpan, getComposersAliveInYear } from "./composers";
  * @param {string} targetName
  * @returns {string[]} 同時代に生きていた作曲家の配列
  */
-function getContemporaryComposers(targetName) {
+function getContemporaryComposers(targetName: string): string[] {
     const resultSet = new Set();
 
     const { birthYear, deathYear } = getComposerLifeSpan(targetName);
@@ -59,10 +63,9 @@ function getContemporaryComposers(targetName) {
 ```
 
 これに対する単体テストを設計するとき、大きな分岐点があります。
-依存関係にある`./composers`をモックするかどうかです。
+**依存関係にある`./composers`をモックするかどうか**です。
 
-ここでは、名著「単体テストの考え方/使い方」に基づき、地に足をつけて考えていきます。
-単体テストの定義、評価について考え、そのあとに先の関数`getContemporaryComposers()`について具体的に考えます。
+単体テストの定義、次に評価について考え、そのあとに先の関数`getContemporaryComposers()`について具体的に考えます。
 
 ### 単体テストの定義
 
@@ -116,7 +119,7 @@ function getContemporaryComposers(targetName) {
 単体テストの2つの考え方――古典学派とロンドン学派――のうち、まずはロンドン学派についてみていきます。
 こちらの情報の方が、巷にあふれている印象があります。
 
-基本的な考え方は「テスト対象の依存を、全てテスト・ダブルで置き換える」というものです。
+基本的な考え方は、**テスト対象の依存を、全てテスト・ダブルで置き換える**というものです。
 これにより、単体テストの定義の1つである「隔離された状態で実行する」を満足するこができます。
 
 先の関数`getContemporaryComposers()`での例を示します。
@@ -130,7 +133,6 @@ import * as composersModule from './composers';
 describe('getContemporaryComposers', () => {
   it('正常系：同時代に生きていた作曲家を返す', () => {
     // 準備 Arrange
-
     // 関数`getComposerLifeSpan()`のスタブを用意する
     vi.spyOn(composersModule, 'getComposerLifeSpan').mockReturnValue({
       birthYear: 1800,
@@ -179,21 +181,20 @@ describe('getContemporaryComposers', () => {
 > - 実行時間が短い
 > - 隔離された状態で実行する
 
-古典学派では「テスト・ケース同士が隔離されている」ことを隔離とします。
+古典学派では**テスト・ケース同士が隔離されている**ことを隔離とします。
 これに対しロンドン学派では、依存をテスト・ダブルに置き換えていたので「コードが隔離されている」ことを隔離としている、と言うことができます。
 
 先の関数`getContemporaryComposers()`での例を示します。
 簡単のために、正常系のみを実装します。
 
 ```ts
-// getContemporaryComposers.classical.test.ts
 import { describe, it, expect, vi } from 'vitest';
 import { getContemporaryComposers } from './composers';
 
 describe('getContemporaryComposers', () => {
   it('正常系：同時代に生きていた作曲家を返す', () => {
     // 準備 Arrange
-    // 実行前のクラスのインスタンス化など：今回はない
+    // 依存するクラスのインスタンス化など：今回はない
     
     // 実行 Act
     const result = getContemporaryComposers('Beethoven');
@@ -207,7 +208,8 @@ describe('getContemporaryComposers', () => {
 今回はシンプルなコード例なので記述はありませんが、実行準備としてクラスのインスタンス化などを行います。
 ちょうど、プロダクション・コードで行われる準備をそのまま行うイメージです。
 
-では、古典学派ではどのような依存のテスト・ダブルを用いるのでしょうか。
+では、古典学派はテスト・ダブルを用いないのかというとそういう訳ではありません。
+古典学派ではどのような依存のテスト・ダブルを用いるのでしょうか。
 まずは「依存」の種類を整理したうえで、述べていきます。
 
 ##### 依存の種類
@@ -227,6 +229,8 @@ describe('getContemporaryComposers', () => {
 
 例えば、データベースやファイルシステムへアクセスする場合、これは共有依存であり置き換える必要があります。
 （コンテナ化されている場合は共有依存とならない可能性がありますが）
+
+「副作用をもつ依存」はテスト・ダブルへの置換対象となりうる、と考えることもできそうです。
 
 一方で、先述の例における関数`getComposerLifeSpan()`、`getComposersAliveInYear()`はプライベート依存であり、共有依存ではありません。
 そのため、テスト・ダブルへの置き換えの対象とはなりません。
