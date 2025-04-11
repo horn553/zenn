@@ -4,8 +4,8 @@ emoji: "🪃"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["javascript", "typescript", "svelte", "sveltekit"]
 publication_name: "orch_canvas"
-published: false
-# published_at: 2025-04-14 06:00
+published: true
+published_at: 2025-04-14 06:00
 ---
 
 ## まとめ
