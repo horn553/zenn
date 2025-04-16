@@ -79,6 +79,28 @@ function getContemporaryComposers(targetName: string): string[] {
 - 実行時間が短い
 - 隔離された状態で実行する
 
+### 単体テストの評価
+
+次に、単体テストの評価について考えていきます。
+これにより、より見通しよく実際の実装例を解釈していくことができます。
+
+#### 良い単体テストを構成する4つの柱
+
+> 単体テストの考え方/使い方
+> └第4章 良い単体テストを構成する4つの柱
+> 　└第1節 良い単体テストを構成する4つの柱
+
+良い単体テストを構成する4つの柱について、次のように示されています。
+
+- 退行（regression）に対する保護
+- リファクタリングへの耐性
+- 迅速なフィードバック
+- 保守のしやすさ
+
+「リファクタリングへの耐性」を最大化しつつ、二律背反である「退行に対する保護」と「迅速なフィードバック」のバランスをとっていくことが必要であると本書中で述べられています。
+
+また、「リファクタリングへの耐性」を最大化するコツとして、「実装の詳細でなく観察可能な振る舞いをテストする」ことが重要であるとされています。
+
 ### 2つの学派
 
 単体テストの考え方について、大きく2つの学派があります。
@@ -235,31 +257,132 @@ describe('getContemporaryComposers', () => {
 一方で、先述の例における関数`getComposerLifeSpan()`、`getComposersAliveInYear()`はプライベート依存であり、共有依存ではありません。
 そのため、テスト・ダブルへの置き換えの対象とはなりません。
 
-### 単体テストの評価
-
-ここまでで、古典学派とロンドン学派の概要を述べてきました。
-では、どちらを使うのがよいのでしょうか？
-
-どちらの学派もあることから分かるように、統一的な見解はありません。
-その代わりに、単体テストの評価について考えていき、各学派の特徴や傾向を理解していきます。
-
-### 関数`getContemporaryComposers()`での応用
-
-●
+---
 
 ## コンポーネントの単体テスト
 
-### 引数、戻り値に対応するもの
+ここまで、一般の関数に対する単体テストについてみていきました。
+これを応用して、コンポーネントの単体テストについて考えていきます。
 
-●関数の引数・返り値との対応。
+### 戻り値に対応するもの
 
-### 何を評価するか
+先で議論したような、一般の関数ではこれらの戻り値は自明です。
 
-●スタイルの取扱。
+しかし、コンポーネントは検討が必要です。
+コンポーネントはDOM構造のほか、スタイルを含むことがほとんどです。
+スクリプトを含む場合も少なくありません。
+
+戻り値は、DOM構造＋スタイル＋スクリプトであると考えられます。
+
+### スタイルは単体テスト対象としにくい
+
+戻り値は「観察可能な振る舞い」であり、テストの対象となりうります。
+
+先に検討した、コンポーネントの戻り値を構成する要素（DOM構造＋スタイル＋スクリプト）のうち、スタイルは検証が難しいです。
+CSSを検証する方法は、実装の詳細のテストとなるため好ましくありません。
+統合テストとしてビジュアル・リグレッション・テストを用いる方法も考えられますが、これはもはや単体テストではありません。
+
+そこで、スタイルを除いた「DOM構造＋スクリプト」を検証対象とするのがよいのではないでしょうか。
 
 ### 具体例を考える
 
-●
+次のようなボタンを考えます。
+
+```html:Nabeatsu.svelte
+<!-- クリックでカウントアップし、3を含む数か3の倍数で色が変わる -->
+<script lang="ts">
+  let count = $state(0);
+  let isAho = $derived(() => count.toString().includes('3') || count % 3 === 0);
+</script>
+
+<button on:click={() => count++} class:aho={isAho}>{count}</button>
+
+<style>
+  .aho {
+    color: red;
+  }
+</style>
+```
+
+これに対し、例えば次のような単体テストが書けるでしょう。
+DOM構造（ボタンとその表示内容、クラス）とスクリプト（クリックによるカウントアップ、スタイル更新）を検証しています。
+
+あくまで検証しているのは付与されたクラスまでであり、スタイルについては検証されていません。
+
+```ts
+import { render, screen, fireEvent } from '@testing-library/svelte';
+import { describe, it, expect } from 'vitest'; // vitest の場合
+
+import Nabeatsu from '$lib/Nabeatsu.svelte'; // 対象コンポーネントのパス
+
+describe('Nabeatsu.svelte', () => {
+  it('初期状態でボタンに 0 が表示され、ahoクラスが付いていないこと', () => {
+    // コンポーネントをレンダリング
+    render(Nabeatsu);
+
+    // ボタン要素を取得
+    const button = screen.getByRole('button');
+
+    // 初期テキストが '0' であることを確認
+    expect(button).toHaveTextContent('0');
+    // 初期状態で 'aho' クラスが付与されていないことを確認
+    expect(button).not.toHaveClass('aho');
+  });
+
+  it('ボタンをクリックするとカウントがインクリメントされること', async () => {
+    render(Nabeatsu);
+    const button = screen.getByRole('button');
+
+    // 1回クリック
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('1');
+    expect(button).not.toHaveClass('aho');
+
+    // もう1回クリック
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('2');
+    expect(button).not.toHaveClass('aho');
+  });
+
+  it('カウントが3の倍数になるとahoクラスが付与されること', async () => {
+    render(Nabeatsu);
+    const button = screen.getByRole('button');
+
+    // 2回クリック（カウントは2）
+    await fireEvent.click(button);
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('2');
+    expect(button).not.toHaveClass('aho');
+
+    // 3回目のクリック（カウントは3）
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('3');
+    expect(button).toHaveClass('aho'); // 3の倍数なのでクラスが付くはず
+  });
+
+  it('カウントに3が含まれる数字になるとahoクラスが付与されること', async () => {
+    render(Nabeatsu);
+    const button = screen.getByRole('button');
+
+    // カウントが12になるまでクリック (ahoクラスは付かない)
+    for (let i = 0; i < 12; i++) {
+      await fireEvent.click(button);
+    }
+    expect(button).toHaveTextContent('12');
+    expect(button).toHaveClass('aho'); // 12は3の倍数
+
+    // カウントが13になるまでクリック
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('13');
+    expect(button).toHaveClass('aho'); // 13は3を含むのでクラスが付くはず
+
+    // カウントが14になるまでクリック
+    await fireEvent.click(button);
+    expect(button).toHaveTextContent('14');
+    expect(button).not.toHaveClass('aho'); // 14は条件に合わない
+  });
+});
+```
 
 ---
 
