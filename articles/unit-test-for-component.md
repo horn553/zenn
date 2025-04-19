@@ -2,7 +2,7 @@
 title: "理論からコンポーネントの単体テストにアプローチしてみる"
 emoji: "🧑🏼‍🏫"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["unittest", "component", "typescript"]
+topics: ["unittest", "component", "typescript", "testing"]
 publication_name: "orch_canvas"
 published: false
 # published_at: 2025-03-03 06:00
@@ -47,9 +47,12 @@ import { getComposerLifeSpan, getComposersAliveInYear } from "./composers";
  * @returns {string[]} 同時代に生きていた作曲家の配列
  */
 function getContemporaryComposers(targetName: string): string[] {
-    const resultSet = new Set();
+    const resultSet = new Set<string>();
 
-    const { birthYear, deathYear } = getComposerLifeSpan(targetName);
+    const lifeSpan = getComposerLifeSpan(targetName);
+    if (!lifeSpan) return [];
+    const { birthYear, deathYear } = lifeSpan;
+
     for (let year = birthYear; year <= deathYear; year++) {
         const composers = getComposersAliveInYear(year);
         composers.forEach(composer => {
@@ -105,7 +108,7 @@ function getContemporaryComposers(targetName: string): string[] {
 
 単体テストの考え方について、大きく2つの学派があります。
 **古典学派**と**ロンドン学派**です。
-それぞれ、『テスト駆動開発』『実践テスト駆動開発』が正書として紹介されています。
+それぞれ『テスト駆動開発』.『実践テスト駆動開発』が正書として紹介されています。
 
 この2つの考え方の最大の違いは、**「隔離」に対する考え方の違い**です。
 この「隔離」というのは、単体テストの定義で登場した概念です。再掲します。
@@ -114,8 +117,7 @@ function getContemporaryComposers(targetName: string): string[] {
 > - 実行時間が短い
 > - 隔離された状態で実行する
 
-これらの学派について具体的にみていき、比較評価していきます。
-その前にまずは、用語の定義を確認します。
+これらの学派の違い、特に「隔離」の捉え方をより深く理解するために、まずはテストで使われる「偽物」、すなわち**テスト・ダブル**について整理しておきましょう。特に、モックとスタブの違いは重要なポイントです。
 
 #### テスト・ダブルの種類
 
@@ -183,12 +185,17 @@ describe('getContemporaryComposers', () => {
     const result = getContemporaryComposers('Beethoven');
 
     // 検証 Assert
+    // 結果の順序は保証されないため、ソートして比較する
     expect(result.sort()).toEqual(['Haydn', 'Mozart', 'Schubert'].sort());
+
+    // （オプション）依存関数の呼び出しを検証することも可能（モック的な使い方）
+    expect(composersModule.getComposerLifeSpan).toHaveBeenCalledWith('Beethoven');
+    expect(mockGetComposersAliveInYear).toHaveBeenCalledTimes(3); // 1800, 1801, 1802
   });
 });
 ```
 
-関数`getContemporaryComposers()`が依存している関数を、全てテスト・ダブル（今回は入力の模倣のみなのでスタブ）で置き換えています。
+関数`getContemporaryComposers()`が依存している関数を、全てテスト・ダブル（今回は主にスタブ）で置き換えています。
 
 これにより、単体テストの定義を十分に満足したテストが記述できました。
 詳細は次の通りです。
@@ -196,9 +203,9 @@ describe('getContemporaryComposers', () => {
 - 「単体 unit」と呼ばれる少量のコードを検証する
   - `getContemporaryComposers()`の実装のみを検証している
 - 実行時間が短い
-  - そのように想定される
+  - 依存先の実際の処理を実行しないため高速
 - 隔離された状態で実行する
-  - 関数`getContemporaryComposers()`を、独立した状態で実行する
+  - 関数`getContemporaryComposers()`を、その依存から切り離して（隔離して）実行する
 
 #### 古典学派
 
@@ -207,35 +214,42 @@ describe('getContemporaryComposers', () => {
 この2つの考え方の最大の違いは、**「隔離」に対する考え方の違い**でした。
 
 古典学派では**テスト・ケース同士が隔離されている**ことを隔離とします。
-これに対しロンドン学派では、依存をテスト・ダブルに置き換えていたので「コードが隔離されている」ことを隔離としている、と言うことができます。
+テスト対象のコードが、そのプライベートな依存関係（他のクラスや関数など）と協調して動作することを検証します。
 
 先の関数`getContemporaryComposers()`での例を示します。
 簡単のために、正常系のみを実装します。
 
 ```ts
-import { describe, it, expect, vi } from 'vitest';
-import { getContemporaryComposers } from './composers';
+import { describe, it, expect } from 'vitest';
+// 依存関係も含めてテスト対象とするため、実際のモジュールをインポート
+import { getContemporaryComposers } from './getContemporaryComposers';
+// import './composers'; // 必要に応じて依存先の初期化などを行う
 
-describe('getContemporaryComposers', () => {
+describe('getContemporaryComposers (Classical School)', () => {
   it('正常系：同時代に生きていた作曲家を返す', () => {
     // 準備 Arrange
-    // 依存するクラスのインスタンス化など：今回はない
-    
+    // - 依存するクラスのインスタンス化など：今回は特になし
+    // - テストに必要なデータが `./composers` 内で適切に設定されている前提
+    //   (例: getComposerLifeSpan('Beethoven')が{1770, 1827}を返すなど)
+
     // 実行 Act
-    const result = getContemporaryComposers('Beethoven');
+    // 実際の getContemporaryComposers を、実際の依存と共に実行
+    const result = getContemporaryComposers('Beethoven'); // 仮の作曲家名
 
     // 検証 Assert
-    expect(result.sort()).toEqual(['Haydn', 'Mozart', 'Schubert'].sort());
+    // 期待される結果（実際の依存関係に基づいて計算されるはずの結果）を検証
+    // 例: もしベートーヴェンと同時代の作曲家としてリストアップされるべき人が分かっていればそれを書く
+    // expect(result.sort()).toEqual(['Haydn', 'Mozart', 'Schubert'].sort());
   });
 });
 ```
 
 今回はシンプルなコード例なので記述はありませんが、実行準備としてクラスのインスタンス化などを行います。
-ちょうど、プロダクション・コードで行われる準備をそのまま行うイメージです。
+プロダクション・コードで使われる際と同じように依存関係を準備するイメージです。
 
 では、古典学派はテスト・ダブルを用いないのかというとそういう訳ではありません。
 古典学派ではどのような依存のテスト・ダブルを用いるのでしょうか。
-まずは「依存」の種類を整理したうえで、述べていきます。
+それについて議論する前に、「依存」の種類を整理します。
 
 ##### 依存の種類
 
@@ -243,9 +257,16 @@ describe('getContemporaryComposers', () => {
 
 | 種類 | 説明 |
 | --- | --- |
-| 共有依存 | テスト・ケース間で共有される依存 |
-| プライベート依存 | 共有されない依存 |
-| プロセス外依存 | 別プロセスで動作する依存<br>共有依存の場合が多いが、必ずしもそうではない（Dockerでコンテナ化している場合など） |
+| 共有依存 | テスト・ケース間で共有される依存（例: 静的変数、外部DB）<br>テストの実行順序によって結果が変わる可能性がある |
+| プライベート依存 | 共有されない依存（例: 通常のクラス、関数呼び出し）<br>テスト対象ごとに独立している |
+| プロセス外依存 | 別プロセスで動作する依存（例: DBサーバー、外部API）<br>ネットワーク越しなど、実行が遅く不安定になる要因 |
+
+前述のように、古典学派では「テスト・ケース同士が隔離されている」ことを重視します。
+この観点から、テストの実行順序に影響を与えたり、テストの実行速度や安定性を著しく損なったりする依存、すなわち**共有依存**や**プロセス外依存**は、テスト・ダブル（スタブやフェイクなど）で置き換えることが推奨されます。
+
+例えば、データベースやファイルシステムへのアクセス、外部API呼び出しなどは、共有依存でありプロセス外依存でもあるため、置き換え対象となることが多いです。
+
+一方で、先述の例における関数`getComposerLifeSpan()`や`getComposersAliveInYear()`が、状態を持たず副作用もない純粋な関数や、テストごとに独立してインスタンス化されるクラス（つまりプライベート依存）であれば、古典学派ではこれらをそのまま利用し、テスト・ダブルには置き換えません。
 
 ##### 古典学派でテスト・ダブルに置き換える依存
 
@@ -254,8 +275,6 @@ describe('getContemporaryComposers', () => {
 
 例えば、データベースやファイルシステムへアクセスする場合、これは共有依存であり置き換える必要があります。
 （コンテナ化されている場合は共有依存とならない可能性がありますが）
-
-「副作用をもつ依存」はテスト・ダブルへの置換対象となりうる、と考えることもできそうです。
 
 一方で、先述の例における関数`getComposerLifeSpan()`、`getComposersAliveInYear()`はプライベート依存であり、共有依存ではありません。
 そのため、テスト・ダブルへの置き換えの対象とはなりません。
@@ -269,136 +288,163 @@ describe('getContemporaryComposers', () => {
 
 ### 戻り値に対応するもの
 
-先で議論したような、一般の関数では戻り値は自明です。
+先の議論で重要だった「観察可能な振る舞い」は、一般の関数では戻り値や（場合によっては）副作用として捉えられます。
 
-しかし、コンポーネントでは検討が必要です。
-コンポーネントはDOM構造のほか、スタイルを含むことがほとんどです。
-スクリプトを含む場合も少なくありません。
+では、コンポーネントにおける「観察可能な振る舞い」とは何でしょうか？
+コンポーネントは通常、ユーザーインターフェースの一部を構成します。そのため、その振る舞いは主に**レンダリング結果**と**ユーザー操作への反応**として観察されます。
 
-戻り値は、DOM構造＋スタイル＋スクリプトであると考えられます。
+具体的には、次の要素の組み合わせと考えられます。
+ * **DOM構造**: どのようなHTML要素が生成されるか。
+ * **表示内容**: テキスト、属性（`class`, `id`, `disabled`など）がどうなっているか。
+ * **状態変化**: ユーザー操作（クリックなど）によって、表示内容やDOM構造が期待通りに変化するか。
+
+スタイル（CSS）もレンダリング結果の一部ですが、単体テストでの扱いは少し注意が必要です。
 
 ### スタイルは単体テスト対象としにくい
 
-戻り値は「観察可能な振る舞い」であり、テストの対象となりうります。
+コンポーネントの「観察可能な振る舞い」のうち、スタイル（見た目）そのものを単体テストで厳密に検証するのは難しい場合があります。
 
-先に検討した、コンポーネントの戻り値を構成する要素（DOM構造＋スタイル＋スクリプト）のうち、スタイルは検証が難しいです。
-CSSそのものを検証する方法は、実装の詳細のテストとなりうるため好ましくありません。
-統合テストとしてビジュアル・リグレッション・テストを用いる方法も考えられますが、これはもはや単体テストではありません。
+CSSそのもの（例: `color: red;`）を直接検証する方法は、実装の詳細に深く依存し、リファクタリングで壊れやすいテストになりがちです。
+統合テストやE2Eテストの範疇で、Visual Regression Testing (VRT) のような手法を用いて見た目の変化（デグレ）を検出する方法もありますが、これはもはや単体テストではありません。
 
-そこで、スタイルを除いた「DOM構造＋スクリプト」を検証対象とするのがよいのではないでしょうか。
+なぜスタイル検証が単体テストで難しいかというと、見た目の確認は環境差（ブラウザ、OSなど）の影響を受けやすく、またCSSのクラス名や構造といった**実装の詳細**に強く依存しがちで、リファクタリングで壊れやすいテストになってしまうためです。
+
+そこで、単体テストのレベルでは、**スタイルを直接検証するのではなく、スタイルを適用するための条件（例: 特定のクラスが付与されているか、特定の属性が設定されているか）**を検証するのが現実的かつ効果的と考えられます。つまり、検証対象は主に「DOM構造＋表示内容＋状態変化」となります。
 
 ### 具体例を考える
 
-次のようなボタンを考えます。
+次のようなSvelteのボタンコンポーネントを考えます。クリックでカウントアップし、3の倍数または3を含む数字のときにahoクラスが付与されます。
 
-```html:Nabeatsu.svelte
-<!-- クリックでカウントアップし、3を含む数か3の倍数で色が変わる -->
+```html
 <script lang="ts">
+  import { state } from 'svelte/internal'; // $state を使うために必要（Svelte 5 の場合）
+
   let count = $state(0);
-  let isAho = $derived(() => count.toString().includes('3') || count % 3 === 0);
+  // count が 3 の倍数か、文字列として '3' を含むかを判定
+  let isAho = $derived(count > 0 && (count % 3 === 0 || count.toString().includes('3')));
 </script>
 
 <button on:click={() => count++} class:aho={isAho}>{count}</button>
 
 <style>
   .aho {
+    /* スタイル自体はテストしないが、クラスの有無をテストする */
     color: red;
+    font-weight: bold;
   }
 </style>
 ```
 
-これに対し、例えば次のような単体テストが書けるでしょう。
-DOM構造（ボタンとその表示内容、クラス）とスクリプト（クリックによるカウントアップ、スタイル更新）を検証しています。
-
-あくまで検証しているのは付与されたクラスまでであり、スタイルについては検証されていません。
+これに対し、次のような単体テストが書けます。
+DOM構造（ボタンの存在、表示テキスト、クラス属性）と、スクリプトによる状態変化（クリックによるカウントアップ、クラスの動的な付与/削除）を検証しています。
 
 ```ts
 import { render, screen, fireEvent } from '@testing-library/svelte';
-import { describe, it, expect } from 'vitest'; // vitest の場合
+import { describe, it, expect, afterEach } from 'vitest';
+import Nabeatsu from './Nabeatsu.svelte'; // 対象コンポーネント
 
-import Nabeatsu from '$lib/Nabeatsu.svelte'; // 対象コンポーネントのパス
+// 各テスト後にレンダリングされたコンポーネントをクリーンアップ
+afterEach(() => {
+  render(Nabeatsu).unmount(); // 簡単なクリーンアップ例
+});
 
 describe('Nabeatsu.svelte', () => {
   it('初期状態でボタンに 0 が表示され、ahoクラスが付いていないこと', () => {
-    // コンポーネントをレンダリング
     render(Nabeatsu);
-
-    // ボタン要素を取得
     const button = screen.getByRole('button');
 
-    // 初期テキストが '0' であることを確認
     expect(button).toHaveTextContent('0');
-    // 初期状態で 'aho' クラスが付与されていないことを確認
+    // 0 の場合は aho クラスは付かない
     expect(button).not.toHaveClass('aho');
   });
 
-  it('ボタンをクリックするとカウントがインクリメントされること', async () => {
+  it('ボタンを1回、2回クリックしてもahoクラスが付かないこと', async () => {
     render(Nabeatsu);
     const button = screen.getByRole('button');
 
-    // 1回クリック
-    await fireEvent.click(button);
+    await fireEvent.click(button); // count = 1
     expect(button).toHaveTextContent('1');
     expect(button).not.toHaveClass('aho');
 
-    // もう1回クリック
-    await fireEvent.click(button);
+    await fireEvent.click(button); // count = 2
     expect(button).toHaveTextContent('2');
     expect(button).not.toHaveClass('aho');
   });
 
-  it('カウントが3の倍数になるとahoクラスが付与されること', async () => {
+  it('ボタンを3回クリックするとahoクラスが付与されること', async () => {
     render(Nabeatsu);
     const button = screen.getByRole('button');
 
-    // 2回クリック（カウントは2）
-    await fireEvent.click(button);
-    await fireEvent.click(button);
-    expect(button).toHaveTextContent('2');
+    await fireEvent.click(button); // 1
+    await fireEvent.click(button); // 2
     expect(button).not.toHaveClass('aho');
 
-    // 3回目のクリック（カウントは3）
-    await fireEvent.click(button);
+    await fireEvent.click(button); // 3
     expect(button).toHaveTextContent('3');
-    expect(button).toHaveClass('aho'); // 3の倍数なのでクラスが付くはず
+    expect(button).toHaveClass('aho'); // 3 は 3 の倍数
   });
 
-  it('カウントに3が含まれる数字になるとahoクラスが付与されること', async () => {
+  it('カウントが13になるとahoクラスが付与されること', async () => {
     render(Nabeatsu);
     const button = screen.getByRole('button');
 
-    // カウントが12になるまでクリック (ahoクラスは付かない)
+    // count が 12 になるまでクリック (12回)
     for (let i = 0; i < 12; i++) {
       await fireEvent.click(button);
     }
     expect(button).toHaveTextContent('12');
-    expect(button).toHaveClass('aho'); // 12は3の倍数
+    expect(button).toHaveClass('aho'); // 12 は 3 の倍数
 
-    // カウントが13になるまでクリック
+    // count が 13 になる (13回目)
     await fireEvent.click(button);
     expect(button).toHaveTextContent('13');
-    expect(button).toHaveClass('aho'); // 13は3を含むのでクラスが付くはず
+    expect(button).toHaveClass('aho'); // 13 は '3' を含む
+  });
 
-    // カウントが14になるまでクリック
+  it('カウントが14になるとahoクラスが付かないこと', async () => {
+     render(Nabeatsu);
+    const button = screen.getByRole('button');
+
+    // count が 13 になるまでクリック (13回)
+    for (let i = 0; i < 13; i++) {
+      await fireEvent.click(button);
+    }
+    expect(button).toHaveTextContent('13');
+    expect(button).toHaveClass('aho');
+
+    // count が 14 になる (14回目)
     await fireEvent.click(button);
     expect(button).toHaveTextContent('14');
-    expect(button).not.toHaveClass('aho'); // 14は条件に合わない
+    expect(button).not.toHaveClass('aho'); // 14 は条件に合わない
   });
 });
 ```
 
----
+このテストでは、`.aho`クラスが付与されるかどうかを検証しており、そのクラスによって具体的にどのようなスタイル（`color: red`など）が適用されるかまでは検証していません。これが、コンポーネント単体テストにおける現実的な落とし所と言えるでしょう。
+
+#### 他のコンポーネントパターンと学派の視点
+
+今回は内部状態を持つシンプルなコンポーネント例でしたが、実際の開発では様々なコンポーネントが登場します。
+
+例えば、**Props**を受け取って表示内容が変わるコンポーネントでは、テスト時に異なるPropsを渡し、それぞれ期待通りにレンダリングされるか（表示テキスト、属性、子要素など）を検証します。
+また、ボタンクリックなどで親コンポーネントに情報を伝えるために**カスタムイベントを発行する**コンポーネントでは、特定の操作を行った際に、期待されるイベント名とデータでイベントが発行されるかを（例えば`vitest`の`vi.fn()`などを使って）検証します。
+
+
+では、古典学派とロンドン学派の考え方はコンポーネントテストにどう適用できるでしょうか？
+今回のような自己完結したコンポーネントでは、依存関係がないため学派によるアプローチの違いは顕著には現れません。
+
+
+しかし、例えば**外部APIを非同期に呼び出して結果を表示する**コンポーネントをテストする場合を考えてみましょう。
+ロンドン学派のアプローチでは、API通信を行う依存オブジェクト（例: Workspaceや特定のAPIクライアント関数）をモックやスタブで置き換えるのが一般的です。これにより、テスト対象コンポーネントのロジックのみを隔離して検証できます。
+一方、古典学派では、プロセス外依存としてAPI通信部分をテスト・ダブル（モックやFake実装）で置き換えることもありますが、場合によってはテスト用のインメモリDBやFakeサーバーを用意し、依存関係ごと（より統合テストに近い形で）テストすることもあります。
+
+どちらのアプローチを取るかは、テストの目的（コンポーネント単体のロジック検証か、連携を含めた振る舞い検証か）、保守性、チームの方針などによって選択することになるでしょう。
 
 ## おわりに
 
-最後までお読みいただき、ありがとうございました！
+今回は、単体テストの理論、特に古典学派とロンドン学派の考え方をベースに、コンポーネントテストへのアプローチを探ってみました。AIがテスト実装を助けてくれる今だからこそ、「良いテストとは何か？」を見極める視点が大切になりますよね。この記事が、皆さんのテスト戦略を考える上でのヒントになれば嬉しいです 🤔✨
 
-今回は、単体テストの理論、特に古典学派とロンドン学派の考え方をベースに、コンポーネントテストへのアプローチを探ってみました。
-AIがテスト実装を助けてくれる今だからこそ、「良いテストとは何か？」を見極める視点がますます大切になってきていると感じます。
-この記事が、皆さんのテスト戦略を練る上でのヒントになれば嬉しいです 🤔✨
-
-コンポーネントの「観察可能な振る舞い」をどう捉えるかなど、悩ましい部分もありますが、今回ご紹介した考え方が、より良いテスト設計への一歩となれば幸いです。
-ご意見や皆さんの現場での工夫など、ぜひコメントで教えてくださいね！
+コンポーネントのどこまでを「観察可能な振る舞い」と捉えるかなど、悩ましい点も多いですが、今回の内容が議論のきっかけや、より良いテストへの一歩となれば幸いです。ご意見や皆さんの工夫など、ぜひコメントで教えてくださいね！最後までお読みいただき、ありがとうございました！ 👋
 
 ---
 
