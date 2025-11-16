@@ -13,16 +13,12 @@ published: true
 
 <!-- begin short upcoming concert announcement -->
 
-:::message
-私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
-
-次回は2025年7月にシューマンの交響曲第2番。
-初めての方も、そうでない方も、お気軽にお越しください！
-
-詳しくは[チケット販売ページ](https://teket.jp/1776/44429?uid=zenn)まで。
-<!-- textlint-disable -->
-:::
-<!-- textlint-disable -->
+> 私たちOrchestra Canvas Tokyoは、都内を中心に活動するアマチュア・オーケストラです。
+>
+> 次回は2025年11月にバレエ音楽『火の鳥』組曲。
+> 初めての方も、そうでない方も、お気軽にお越しください！
+>
+> 詳しくは[チケット販売ページ](https://teket.jp/1776/52506?uid=zenn)まで。
 
 <!-- end short upcoming concert announcement -->
 
@@ -295,14 +291,14 @@ Orchestra Canvas Tokyoは、都内を中心に活動するアマチュアオー�
 ご来場をお待ちしています。
 
 > **Orchestra Canvas Tokyo**
-> **第14回定期演奏会**
+> **第15回定期演奏会**
 >
-> 2025年7月12日(土)
-> 練馬区立練馬文化センター 大ホール
-> シューマン / 交響曲第2番 ほか
+> 2025年11月24日(月祝)
+> ミューザ川崎シンフォニーホール
+> ストラヴィンスキー / バレエ音楽『火の鳥』組曲（1945年版） ほか
 >
-> [![](/images/regular-14.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-14)
+> [![](/images/next-concert.png =250x)](https://www.orch-canvas.tokyo/concerts/regular-15)
 >
-> 詳細は[チケット販売ページ](https://teket.jp/1776/44429?uid=zenn)にて
+> 詳細は[チケット販売ページ](https://teket.jp/1776/52506?uid=zenn)にて
 
 <!-- end long upcoming concert announcement -->
