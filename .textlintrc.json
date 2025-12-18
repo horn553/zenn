@@ -3,16 +3,14 @@
   "filters": {
     "comments": true,
     "allowlist": {
-      "allow": [
-        "/^::::/m"
-      ]
+      "allow": ["/^::::/m"]
     }
   },
   "rules": {
     "preset-ja-technical-writing": {
       "no-exclamation-question-mark": false,
       "ja-no-successive-word": {
-        "allow": ["…", "など", "！"]
+        "allow": ["…", "など", "！", "●", "☆", "★"]
       },
       "ja-no-mixed-period": {
         "allowPeriodMarks": ["……"]
