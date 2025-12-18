@@ -35,7 +35,9 @@ published_at: 2025-03-17 06:00
 小規模ながらのサイトの開発・保守を続ける中で、SvelteKitにおいて **「ローカルなアセット」** という概念が有用なのではないか？という私見が生まれました。
 今回はそれについてまとめていきます。
 
+<!-- textlint-disable ja-technical-writing/no-doubled-joshi -->
 私が調べた限りでは類似の意見を見つけきれなかったのですが、もし心あたりがある方がいらっしゃいましたら、教えていただけると嬉しいです！
+<!-- textlint-enable ja-technical-writing/no-doubled-joshi -->
 
 ---
 
@@ -156,10 +158,12 @@ Viteのドキュメント[^4]によると、次のような処理が行われま
 これこそが、「ローカルなアセット」という考え方です。
 
 これの考え方を推す理由が2つあります。
+<!-- textlint-disable ja-technical-writing/ja-no-mixed-period -->
 すなわち、
 
 - `+page.svelte` の登場
 - 依存関係の単純化
+<!-- textlint-enable ja-technical-writing/ja-no-mixed-period -->
 
 です。
 
@@ -170,7 +174,9 @@ Viteのドキュメント[^4]によると、次のような処理が行われま
 [^7]: かつては、`index.svelte` を用いるか、`エンドポイント名.svelte` を作成していました。
 
 この仕様により、各エンドポイントがディレクトリ分けされています。
+<!-- textlint-disable ja-technical-writing/ja-no-redundant-expression -->
 すなわち、各エンドポイントを構成するファイル群をまとめて管理することができます。
+<!-- textlint-enable ja-technical-writing/ja-no-redundant-expression -->
 
 プレフィックス `+` も効いており、エクスプローラ上でSvelte関連のファイルが最上部に表示されることが多くなります。
 特に、IDEのファイルエクスプローラではファイル名昇順で並ぶため、このメリットを享受しやすいです。
@@ -195,8 +201,10 @@ Viteのドキュメント[^4]によると、次のような処理が行われま
 
 配置場所のもう1つの選択肢である、「`$lib` 配下への配置」は、依存関係を複雑化させる懸念があります。
 
+<!-- textlint-disable ja-technical-writing/no-doubled-joshi -->
 つまり、複数のSvelteファイルから参照される、いわば「グローバル・アセット」が氾濫する危険があるということです。
 ちょうど、変数はスコープが小さいほうが良いように、アセットもスコープを小さくするのが好ましいと考えています。
+<!-- textlint-enable ja-technical-writing/no-doubled-joshi -->
 
 ```plain:プロジェクト構成（抜粋）
 /src/
@@ -225,12 +233,18 @@ Viteのドキュメント[^4]によると、次のような処理が行われま
 
 というのは、真っ先に想定されうる懸念です。
 
+<!-- textlint-disable ja-technical-writing/sentence-length -->
 つまり、ディレクトリ構造で明示したかったスコープを壊しながら、長い相対パスでインポートしたり、同じファイルを複数個所に配置してパフォーマンスの懸念を生じさせる必要があったりするのではないかということです。
+<!-- textlint-enable ja-technical-writing/sentence-length -->
 
+<!-- textlint-disable ja-technical-writing/ja-no-redundant-expression -->
 これに対し、`$lib/assets/` などで共通ライブラリとしてアセットを用意し、そこに配置するというのが消極的な解決方法でしょう。
+<!-- textlint-enable ja-technical-writing/ja-no-redundant-expression -->
 
 しかし、コンポーネントの設計を見直すような「積極的な解決」を図ることで、多くの場合は「ローカルなアセット」を維持できます。
+<!-- textlint-disable ja-technical-writing/ja-no-redundant-expression -->
 そのため、実際には共通ライブラリとして用意するような解決方法が必要となる場合は、非常に稀であると考えています。
+<!-- textlint-enable ja-technical-writing/ja-no-redundant-expression -->
 
 例えば、ヘッダーとフッターに同じロゴ画像を用いる場合を考えます。
 消極的な解決方法では、次のようなプロジェクト構成になります。
@@ -273,7 +287,9 @@ Viteのドキュメント[^4]によると、次のような処理が行われま
 　└ +layout.svelte
 ```
 
+<!-- textlint-disable ja-technical-writing/no-doubled-joshi -->
 前述した `+` プレフィックスによるフォルダ内の見通しの良さは失われますが、アセットのスコープが明確となる点は魅力的ではないでしょうか。
+<!-- textlint-enable ja-technical-writing/no-doubled-joshi -->
 
 より複雑なユースケースでは、ロゴ画像をプロパティとして渡すのも手かもしれません。
 いわば、「ロゴ画像を外から注入」します。

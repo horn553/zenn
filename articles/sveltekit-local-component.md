@@ -35,7 +35,9 @@ published_at: 2025-03-24 06:00
 小規模ながらサイトの開発・保守を続ける中で、SvelteKitにおいて「ローカルなコンポーネント」という概念が有用なのではないか？という私見が生まれました。
 今回はそれについてまとめていきます。
 
+<!-- textlint-disable ja-technical-writing/no-doubled-joshi -->
 私が調べた限りでは類似の意見を見つけきれなかったのですが、もし心あたりがある方がいらっしゃいましたら、教えていただけると嬉しいです！
+<!-- textlint-enable ja-technical-writing/no-doubled-joshi -->
 
 :::message
 前回の記事[「【SvelteKit】結局、アセット(画像)はどこに配置するのか【「ローカルなアセット」というアイデア】」](https://zenn.dev/orch_canvas/articles/sveltekit-local-asset)のコンポーネント版です。

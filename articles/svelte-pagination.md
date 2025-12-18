@@ -27,7 +27,9 @@ published: false
 
 ## 背景
 
+<!-- textlint-disable ja-technical-writing/ja-no-mixed-period -->
 当団（[Orchestra Canvas Tokyo](https://www.orch-canvas.tokyo/)）では、●
+<!-- textlint-enable ja-technical-writing/ja-no-mixed-period -->
 
 ---
 

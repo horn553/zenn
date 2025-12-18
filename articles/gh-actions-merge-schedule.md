@@ -48,6 +48,7 @@ https://github.com/marketplace/actions/merge-schedule
 
 公式のガイドに則り、ワークフローを作成します。
 
+<!-- textlint-disable ja-technical-writing/ja-no-mixed-period -->
 ::::details ソースコード例
 
 ```yaml:/.github/workflows/merge-schedule.yaml
@@ -74,6 +75,7 @@ jobs:
 ```
 
 ::::
+<!-- textlint-enable ja-technical-writing/ja-no-mixed-period -->
 
 ### 実際の運用
 
@@ -125,7 +127,9 @@ https://docs.github.com/ja/actions/writing-workflows/choosing-when-your-workflow
 
 ## おわりに
 
+<!-- textlint-disable ja-technical-writing/ja-no-redundant-expression -->
 指定日時のマージを行うため、手始めにGoogle検索を行いましたが、思うようなライブラリは見あたりませんでした。
+<!-- textlint-enable ja-technical-writing/ja-no-redundant-expression -->
 
 コピペやAIによる実装も視野に入れましたが、保守コストがかさみそう……
 そこで、GitHub Actions Marketplaceで調べていくと、手早くいいActionsを見つけることができました。
