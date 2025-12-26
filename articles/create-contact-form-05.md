@@ -27,7 +27,7 @@ SvelteKit x Resend で、メールの送信機能を実装します！！
 
 ---
 
-#### このシリーズの記事一覧
+## このシリーズの記事一覧
 
 1. [① サイト作成：SvelteKit x Cloudflare Pages](https://zenn.dev/orch_canvas/articles/create-contact-form-01)
 1. [② フォーム作成：SvelteKit x Zod x Google reCAPTCHA v3](https://zenn.dev/orch_canvas/articles/create-contact-form-02)

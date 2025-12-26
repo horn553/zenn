@@ -1,5 +1,6 @@
 {
   "MD034": false, // allow bare urls
   "MD013": false, // allow long lines
-  "MD033": false // allow inline html
+  "MD033": false, // allow inline html
+  "MD060": false // disable table column style
 }
