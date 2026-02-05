@@ -27,6 +27,10 @@ published: false
 
 ---
 
+## PC系ブラウザの拡大縮小
+
+PC系ブラウザの拡大縮小は **page zoom** であり、Initial Viewportのサイズが変化します。
+
 ## Layout ViewportとVisual Viewportとは？
 
 Document（1つのWebページ全体）の中に、Layout Viewportが1つあります。
