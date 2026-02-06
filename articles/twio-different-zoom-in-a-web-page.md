@@ -31,6 +31,18 @@ published: false
 
 PC系ブラウザの拡大縮小は **page zoom** であり、Initial Viewportのサイズが変化します。
 
+……はて？
+
+もう少し馴染みがある言葉で表現すると、
+**innerHeight/WidthとdevicePixelRatioが変化する**
+とでも言えましょうか。
+
+この線で噛み砕いていきます。
+
+innerHeight/Widthの説明
+
+devicePixelRatioの説明
+
 ## Layout ViewportとVisual Viewportとは？
 
 Document（1つのWebページ全体）の中に、Layout Viewportが1つあります。
