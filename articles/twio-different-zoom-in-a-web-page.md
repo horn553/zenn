@@ -38,8 +38,14 @@ PC系ブラウザの拡大縮小は **page zoom** であり、Initial Viewport�
 とでも言えましょうか。
 
 この線で噛み砕いていきます。
+まずは、各用語の定義を確認します。
 
-innerHeight/Widthの説明
+### innerHeight/Width
+
+正式名称は `Window.innerHeight`、`Window.innerWidth`で、
+レビューポートの高さ/幅(px)です。
+
+
 
 devicePixelRatioの説明
 
