@@ -11,7 +11,7 @@ published: false
 ## まとめ
 
 - [Herdr](https://herdr.dev/) という AI agent native なターミナル・マルチプレクサにはまっている
-- Herdr の agent status が `done` または `blocked` になったら、ntfy へ通知するプラグインを作った
+- Herdr の agent status が `done` または `blocked` になったら、[ntfy](https://ntfy.sh/) へ通知するプラグインを作った
 - オレオレ＝AIコーディングを加速セヨ！
 
 <!-- begin short upcoming concert announcement -->
@@ -29,10 +29,11 @@ published: false
 
 https://github.com/horn553/herdr-ntfy
 
-[Herdr](https://herdr.dev/) の agent status が `done` または `blocked` になったとき、[ntfy](https://ntfy.sh/) へ通知します。
+[Herdr](https://herdr.dev/) の agent status は `done`、`blocked`、`idle` の3つ。
+これが `done` または `blocked` になったとき、[ntfy](https://ntfy.sh/) へ通知します。
 
-シンプルに、シェルスクリプトベースで動きます。
-必要なのは、強いて言えば `jq` くらいです。
+めぼしい依存は `sh`、`curl`、`jq` コマンド！
+依存関係は最低限な、シェルスクリプトベースのプラグインです。
 
 ### 通知サンプル
 
@@ -71,22 +72,24 @@ NTFY_LINES=12
 
 以上！
 
-保護された topic を使う場合は `NTFY_TOKEN` を設定します。保護していない topic なら空でも動きます。
+保護された topic を使う場合は `NTFY_TOKEN` を設定します。
 
 dry-run や通知テストも備えています。
 詳しくは[リポジトリ](https://github.com/horn553/herdr-ntfy)を参照してください。
 
-## ここからは Herdr の話
+## よもやま話
 
 Herdr の TUI、いいですね！
 
 レスポンシブな TUI で、クリックや右クリックでも操作できます。
-言われてみれば技術的には可能だと分かるものの、それをよい UX に落とし込んでいるのがありがたいです。
+これらをよい UX に落とし込んでいるのが、とてもありがたいです。
 
-クライアントの柔軟性という点では Web アプリが台頭してきたと考えていますが、
+負けじと創作の意欲が湧くというものですね！
+
+クライアントの柔軟性という点で Web アプリが台頭してきたと考えていますが、
 ここにきて TUI が存在感を増しているのは興味深い流れです。
 
-これからも、[Tailscale Services](https://tailscale.com/docs/features/tailscale-services)でのオレオレ＝アプリの開発が捗りそうです。
+[Tailscale Services](https://tailscale.com/docs/features/tailscale-services)とともに、オレオレ＝Webアプリの開発に欠かせない存在となっていきそうです♡
 
 ---
 

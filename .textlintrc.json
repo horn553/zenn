@@ -13,7 +13,7 @@
         "allow": ["…", "など", "！", "●", "☆", "★"]
       },
       "ja-no-mixed-period": {
-        "allowPeriodMarks": ["……"]
+        "allowPeriodMarks": ["……", "♡"]
       },
       "no-mix-dearu-desumasu": {
         "preferInList": "ですます"
