@@ -61,7 +61,7 @@ chmod 600 "$config_dir/.env"
 $EDITOR "$config_dir/.env"
 ```
 
-`.env` には通知先を置きます。
+`.env` には通知先などを設定します。
 
 ```sh
 NTFY_URL=https://ntfy.sh/your-topic
