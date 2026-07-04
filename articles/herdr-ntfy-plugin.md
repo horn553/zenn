@@ -1,8 +1,8 @@
 ---
-title: "herdrにntfy通知をつないだら、ヘッドレスPCが増えた"
-emoji: "🔔"
+title: "herdrにntfyをつなぐ！― AI agent nativeなターミナル・マルチプレクサ"
+emoji: "🐏"
 type: "tech" # tech: 技術記事 / idea: アイデア
-topics: ["herdr", "ntfy", "ai", "tui", "docker"]
+topics: ["herdr", "ntfy", "ai", "tui"]
 publication_name: "orch_canvas"
 published: false
 # published_at: 2026-07-03 06:00
@@ -10,9 +10,9 @@ published: false
 
 ## まとめ
 
-- Herdrのagentが `done` または `blocked` になったら、ntfyへ通知する小さなプラグインを作りました
-- SSH先の軽快なTUIでAIエージェントを並列に走らせ、終わったら手元のノートPCやスマートフォンに知らせます
-- ベンダーロックインを避けつつ、Dockerで運べる作業環境を増やしていくのが、近ごろたいへん楽しいです
+- [Herdr](https://herdr.dev/) という AI agent native なターミナル・マルチプレクサにはまっている
+- Herdr の agent status が `done` または `blocked` になったら、ntfy へ通知するプラグインを作った
+- オレオレ＝AIコーディングを加速セヨ！
 
 <!-- begin short upcoming concert announcement -->
 
@@ -27,12 +27,30 @@ published: false
 
 ## 作ったもの
 
-`herdr-ntfy` を作りました。
-
 https://github.com/horn553/herdr-ntfy
 
-[Herdr](https://herdr.dev/) のagentが `done` または `blocked` になったとき、[ntfy](https://ntfy.sh/) へ通知します。
-中身は `sh`、`curl`、`jq` だけで動く、ちいさなプラグインです。
+[Herdr](https://herdr.dev/) の agent status が `done` または `blocked` になったとき、[ntfy](https://ntfy.sh/) へ通知します。
+
+シンプルに、シェルスクリプトベースで動きます。
+必要なのは、強いて言えば `jq` くらいです。
+
+### 通知サンプル
+
+```text
+タイトル: ✅ herdr-ntfy・main (Herdr)
+
+Implemented the ntfy plugin.
+Tests not run.
+```
+
+```text
+タイトル: 🚫 herdr-ntfy・main (Herdr)
+
+Blocked because NTFY_URL is not configured.
+Set it in the plugin config directory .env file.
+```
+
+## 導入方法
 
 ```sh
 herdr plugin install horn553/herdr-ntfy
@@ -51,102 +69,24 @@ NTFY_TOKEN=
 NTFY_LINES=12
 ```
 
-保護されたtopicを使う場合は `NTFY_TOKEN` を設定します。
-以上です。勢いよく入れれば鳴ります。めでたし。
+以上！
 
-## なぜ作ったか
+保護された topic を使う場合は `NTFY_TOKEN` を設定します。保護していない topic なら空でも動きます。
 
-HerdrのTUIが好きです。
+dry-run や通知テストも備えています。
+詳しくは[リポジトリ](https://github.com/horn553/herdr-ntfy)を参照してください。
 
-SSHで自宅のマシンへ入り、TUIでagentをいくつか立てる。
-出先のノートPCでも、スマートフォンでも、やることはだいたい同じです。
-画面は軽い。指は速い。余計な同期を待たなくてよい。
+## ここからは Herdr の話
 
-ただし、agentを複数走らせると、終わりを見落とします。
+Herdr の TUI、いいですね！
 
-「ビルドしておいて」
-「このPRコメントを直して」
-「この実装をレビューして」
+レスポンシブな TUI で、クリックや右クリックでも操作できます。
+言われてみれば技術的には可能だと分かるものの、それをよい UX に落とし込んでいるのがありがたいです。
 
-こう頼んだあと、こちらは別の作業へ移ります。
-しかし、終わったかどうかを見るためにTUIを何度も覗く。
-これはいけません。人間が見張り番になっておりますぞ。
+クライアントの柔軟性という点では Web アプリが台頭してきたと考えていますが、
+ここにきて TUI が存在感を増しているのは興味深い流れです。
 
-そこでntfyです。
-agentが終わったら `✅`、詰まったら `🚫`。
-通知タイトルにはworkspaceとtabを入れ、本文にはpaneの直近出力を載せます。
-
-```text
-Title: ✅ herdr-ntfy・main (Herdr)
-
-Implemented the ntfy plugin.
-Tests not run.
-```
-
-このくらいで十分でした。
-凝ったダッシュボードより、まずは「終わったぞ」と知らせてくれる方が効きます。
-
-## 今の使い方
-
-一番うれしいのは、自分の作業場所を手元の端末から剥がせることです。
-
-私はいま、自宅のデスクトップやミニPCにSSHで入り、HerdrのTUIを開いています。
-そこでagentをいくつか立てる。
-終わったらntfyが鳴る。
-これで、ノートPCのバッテリーやブラウザのタブ数に気を取られずに済みます。
-
-通知をntfyにしたので、Herdr本体と通知先を分けられました。
-作業環境はDockerで持ち運びます。
-それぞれが小さな部品なので、気に入らなくなったら差し替えればよい。
-この雑に組み替えられる感じがよいのです。
-
-最近はこれが楽しくて、ヘッドレスPCを買い足しました。
-言い訳を申しますと、これは浪費ではなく実験環境の増設です。
-たぶん。
-
-## dry-runもあります
-
-設定確認用にdry-runを入れてあります。
-ntfyには送らず、設定とサンプル通知を表示します。
-
-```console
-$ herdr plugin action invoke dry-run
-
-$ herdr plugin log list --plugin horn553.herdr-ntfy --limit 1 | jq -r '.result.logs[-1].stdout'
-Herdr ntfy dry-run
-
-curl: ok
-jq: ok
-NTFY_URL: ok (https://ntfy.sh/your-...)
-NTFY_TITLE: Herdr
-NTFY_TOKEN: not set
-NTFY_LINES: 12
-
-Sample title:
-✅ verification・dry-run (Herdr)
-
-Sample body:
-Herdr ntfy dry-run: no notification was sent.
-
-Result: ok
-```
-
-通知のためのプラグインで、通知設定に失敗して詰まる。
-これはなかなか味わい深い事故なので、先にdry-runしておくのがおすすめです。
-
-## 使っていてよかったところ
-
-私は、自宅PCへSSHして、Herdrで複数のagentを立てる使い方が合いました。
-通知が鳴るので、TUIを開きっぱなしで凝視しなくてよい。
-スマートフォンで通知だけ見て、必要ならSSHで戻る。
-この往復が軽いです。
-
-趣味の小物づくりでも、仕事の下ごしらえでも、私はまず小さく試します。
-作って、壊して、直して、また作る。
-その一巡が速くなると、作業が前へ進みます。気分もよい。
-
-`herdr-ntfy` は、その横に置く小さな鈴です。
-Herdrを使っている方は、よろしければ鳴らしてみてくだされ。
+これからも、[Tailscale Services](https://tailscale.com/docs/features/tailscale-services)でのオレオレ＝アプリの開発が捗りそうです。
 
 ---
 
