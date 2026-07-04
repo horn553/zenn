@@ -1,5 +1,5 @@
 ---
-title: "herdrにntfyをつなぐ！― AI agent nativeなターミナル・マルチプレクサ"
+title: "herdrにntfyをつなぐ！― AI agent nativeなターミナル・マルチプレクサに通知を🔔"
 emoji: "🐏"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["herdr", "ntfy", "ai", "tui"]
