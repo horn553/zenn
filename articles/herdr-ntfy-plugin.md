@@ -4,7 +4,7 @@ emoji: "🐏"
 type: "tech" # tech: 技術記事 / idea: アイデア
 topics: ["herdr", "ntfy", "ai", "tui"]
 publication_name: "orch_canvas"
-published: false
+published: true
 # published_at: 2026-07-03 06:00
 ---
 
